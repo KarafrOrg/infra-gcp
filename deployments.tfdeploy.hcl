@@ -3,8 +3,16 @@ store "varset" "credentials" {
   category = "terraform"
 }
 
+identity_token "gcp" {
+  audience = ["hcp.workload.identity"]
+}
+
 deployment "production" {
   inputs = {
+    gcp_identity_token        = identity_token.gcp.token
+    gcp_audience              = varset.credentials.gcp_audience
+    gcp_service_account_email = varset.credentials.gcp_service_account_email
+
     gcp_project_name = "karafra-net"
     gcp_region       = "europe-central2"
     gcp_zone         = "europe-central2-a"
