@@ -20,7 +20,6 @@ deployment "production" {
     gcp_zone = "europe-central2-a"
 
     # Kubernetes configuration
-    k8s_context_name      = "k8s-production"
     kube_host             = store.varset.credentials.kube_host
     kube_client_cert_data = store.varset.credentials.kube_client_cert_data
     kube_client_key_data  = store.varset.credentials.kube_client_key_data

@@ -63,19 +63,6 @@ variable "kube_host" {
 }
 # endregion
 
-# region Kubernetes provider variables
-variable "k8s_kubeconfig_path" {
-  description = "Path to kubeconfig file for k8s cluster"
-  type        = string
-  default     = "~/.kube/config"
-}
-
-variable "k8s_context_name" {
-  description = "Kubernetes context name for k8s cluster"
-  type        = string
-}
-# endregion
-
 # region Service accounts
 variable gcp_service_service_accounts {
   description = "Map of service account configurations"
