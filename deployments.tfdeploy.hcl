@@ -10,7 +10,7 @@ identity_token "gcp" {
 deployment "production" {
   inputs = {
     gcp_identity_token        = identity_token.gcp.jwt
-    gcp_audience              = store.varset.credentials.gcp_audience
+    gcp_audience              = "//iam.googleapis.com/projects/1019265211616/locations/global/workloadIdentityPools/terraform-cloud/providers/terraform-cloud"
     gcp_service_account_email = store.varset.credentials.gcp_service_account_email
 
     gcp_project_name = "karafra-net"
