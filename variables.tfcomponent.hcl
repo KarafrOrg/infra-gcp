@@ -83,12 +83,6 @@ variable "secret_replication_automatic" {
 # endregion
 
 # region k8s Workload Identity Federation
-
-variable "kubeconfig" {
-  type        = string
-  description = "Kubeconfig content for the cluster"
-}
-
 variable "k8s_clusters" {
   description = "Map of k8s cluster configurations for workload identity federation"
   type = map(object({
