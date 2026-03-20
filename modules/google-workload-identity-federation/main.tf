@@ -28,7 +28,6 @@ resource "google_iam_workload_identity_pool_provider" "k8s_oidc" {
 }
 
 locals {
-  # Flatten K8s service accounts to create IAM bindings
   k8s_service_accounts = flatten([
     for cluster_key, cluster_value in var.k8s_clusters : [
       for ksa_key, ksa_value in cluster_value.kubernetes_service_accounts : {
