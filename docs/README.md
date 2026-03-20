@@ -1,26 +1,31 @@
-# GCP Infrastructure Documentation
+# infra-gcp
 
-This directory contains comprehensive documentation for the GCP infrastructure managed by Terraform Stacks.
+IAC repo for external GCP infrastructure management, focused on Kubernetes service accounts, Workload Identity
+Federation, and secret management.
 
 ## Contents
 
 ### Getting Started
+
 - [Deployment Guide](DEPLOYMENT.md) - Step-by-step deployment instructions, troubleshooting, and operations
 - [Architecture Overview](ARCHITECTURE.md) - System architecture, data flows, and design patterns
 
 ### Technical Reference
+
 - [Component Reference](COMPONENTS.md) - Detailed documentation for each Terraform component
 - [Workload Identity Federation](WORKLOAD_IDENTITY.md) - WIF setup, testing, and troubleshooting
 
 ## Quick Links
 
 ### For Operators
+
 - [Prerequisites](DEPLOYMENT.md#prerequisites)
 - [Authentication Setup](DEPLOYMENT.md#authentication-setup)
 - [Deployment Workflow](DEPLOYMENT.md#step-by-step-deployment)
 - [Troubleshooting](DEPLOYMENT.md#troubleshooting)
 
 ### For Developers
+
 - [Architecture Diagrams](ARCHITECTURE.md#stack-structure)
 - [Component Documentation](COMPONENTS.md)
 - [Data Flow](ARCHITECTURE.md#data-flow)
@@ -31,24 +36,28 @@ This directory contains comprehensive documentation for the GCP infrastructure m
 This Terraform Stack manages the following GCP services:
 
 ### Service Account Management
+
 - GCP service account creation
 - IAM role assignment
 - Service account lifecycle management
 - Multi-purpose service accounts for different workloads
 
 ### Secret Management
+
 - Secret Manager integration
 - Pub/Sub topic creation for secret rotation notifications
 - CA certificate rotation notification system
 - Kubernetes secret integration
 
 ### Workload Identity Federation
+
 - Kubernetes workload authentication to GCP
 - OIDC-based identity federation
 - Service account impersonation
 - Zero Trust security model
 
 ### Kubernetes Integration
+
 - Kubernetes service account creation
 - Service account annotation management
 - Workload Identity binding
@@ -57,15 +66,20 @@ This Terraform Stack manages the following GCP services:
 ## Architecture Highlights
 
 ### Zero Trust Security
-All Kubernetes workloads authenticate to GCP using Workload Identity Federation, eliminating the need for static credentials.
+
+All Kubernetes workloads authenticate to GCP using Workload Identity Federation, eliminating the need for static
+credentials.
 
 ### Component-Based Design
+
 Each infrastructure concern is isolated into its own component with clear inputs and outputs.
 
 ### Multi-Cluster Support
+
 The stack supports multiple Kubernetes clusters with environment-specific configurations.
 
 ### Infrastructure as Code
+
 Complete infrastructure defined in HCL with version control and peer review.
 
 ## Quick Start
@@ -107,16 +121,19 @@ Workload Identity Federation depends on Service Accounts being created first.
 ## Managed Resources
 
 ### GCP Service Accounts
+
 - `k8s-admin` - Kubernetes cluster administration
 - `k8s-secret-reader` - Secret Manager access for applications
 - `k8s-storage-admin` - Cloud Storage management
 - `k8s-monitoring` - Monitoring and logging
 
 ### Kubernetes Service Accounts
+
 - `cluster-admin` (kube-system) - Cluster administration tasks
 - `default-app` (default) - Application workloads with secret access
 
 ### Pub/Sub Topics
+
 - `k8s-ca-rotation-*` - Certificate rotation notifications per cluster
 
 ## References
