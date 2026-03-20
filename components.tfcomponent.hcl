@@ -1,7 +1,3 @@
-# ============================================================
-# GCP Service Accounts
-# ============================================================
-
 component "google-service-account" {
   source = "./modules/google-service-account"
 
@@ -14,10 +10,6 @@ component "google-service-account" {
     gcp_project_name = var.gcp_project_name
   }
 }
-
-# ============================================================
-# Secret Manager - k8s CA Certificate Pub/Sub Topics
-# ============================================================
 
 component "google-secret-manager" {
   source = "./modules/google-secret-manager"
@@ -32,10 +24,6 @@ component "google-secret-manager" {
     pub_sub_topic_prefix    = var.pub_sub_topic_prefix
   }
 }
-
-# ============================================================
-# Workload Identity Federation
-# ============================================================
 
 component "google-workload-identity-federation" {
   source = "./modules/google-workload-identity-federation"
@@ -53,10 +41,6 @@ component "google-workload-identity-federation" {
     component.google-service-account
   ]
 }
-
-# ============================================================
-# Kubernetes Service Accounts
-# ============================================================
 
 component "kubernetes-service-account" {
   source = "./modules/kubernetes-service-account"
