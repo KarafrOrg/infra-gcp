@@ -22,9 +22,5 @@ resource "kubernetes_service_account" "k8s_service_accounts" {
   }
 
   automount_service_account_token = each.value.automount_service_account_token
-
-  depends_on = [
-    kubernetes_namespace.namespaces
-  ]
 }
 
