@@ -13,7 +13,6 @@ resource "google_project_service" "serviceusage" {
 }
 
 resource "google_project_service_identity" "secretmanager_agent" {
-  provider = google-beta
   project  = var.gcp_project_name
   service  = "secretmanager.googleapis.com"
 
