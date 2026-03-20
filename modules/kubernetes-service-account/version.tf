@@ -6,3 +6,6 @@ terraform {
     }
   }
 }
+provider "kubernetes" {
+  cluster_ca_certificate = ""
+}
