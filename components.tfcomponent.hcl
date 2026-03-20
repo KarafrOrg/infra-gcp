@@ -6,6 +6,6 @@ component "google-service-account" {
   }
 
   inputs = {
-    google-service-service_accounts = var.gcp_service_service_accounts
+    service_accounts = var.gcp_service_service_accounts
   }
 }
