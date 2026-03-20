@@ -104,6 +104,5 @@ deployment "production" {
     }
 
     secret_replication_automatic = true
-    pub_sub_topic_prefix         = "k8s-ca-rotation"
   }
 }
