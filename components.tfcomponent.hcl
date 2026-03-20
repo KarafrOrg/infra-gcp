@@ -10,3 +10,16 @@ component "google-service-account" {
     gcp_project_name = var.gcp_project_name
   }
 }
+
+component "google-workload-identity-federation" {
+  source = "./modules/google-workload-identity-federation"
+
+  providers = {
+    google = provider.google.main
+  }
+
+  inputs = {
+    gcp_project_name              = var.gcp_project_name
+    workload_identity_federations = var.workload_identity_federations
+  }
+}

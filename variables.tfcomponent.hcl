@@ -45,3 +45,17 @@ variable gcp_service_service_accounts {
   default = {}
 }
 # endregion
+
+# region Workload Identity Federation
+variable "workload_identity_federations" {
+  type = map(object({
+    issuer_uri                = string
+    namespace                 = string
+    ksa_name                  = string
+    gcp_service_account_email = string
+    display_name              = optional(string)
+    description               = optional(string)
+  }))
+  default = {}
+}
+# endregion
