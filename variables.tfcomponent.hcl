@@ -39,23 +39,27 @@ variable "kube_client_cert_data" {
   description = "Base64 encoded client certificate data for Kubernetes provider"
   type        = string
   sensitive   = true
+  ephemeral   = true
 }
 
 variable "kube_client_key_data" {
   description = "Base64 encoded client key data for Kubernetes provider"
   type        = string
   sensitive   = true
+  ephemeral   = true
 }
 
 variable "kube_client_ca_cert" {
   description = "Base64 encoded cluster CA certificate data for Kubernetes provider"
   type        = string
   sensitive   = true
+  ephemeral   = true
 }
 
 variable "kube_host" {
   description = "Kubernetes API server host URL for Kubernetes provider"
   type        = string
+  ephemeral   = true
 }
 # endregion
 
