@@ -2,96 +2,58 @@
 # GCP Service Accounts Outputs
 # ============================================================
 
-output "gcp_service_accounts" {
+publish_output "gcp_service_accounts" {
   description = "Created GCP service accounts"
   value       = component.google-service-account.service_accounts
-  type = map(object({
-    email        = string
-    display_name = string
-    description  = string
-    roles        = list(string)
-  }))
 }
 
 # ============================================================
 # Secret Manager Outputs
 # ============================================================
 
-
-output "rotation_pub_sub_topics" {
+publish_output "rotation_pub_sub_topics" {
   description = "Pub/Sub topics for CA certificate rotation notifications"
   value       = component.google-secret-manager.rotation_pub_sub_topics
-  type = map(object({
-    name = string
-    id   = string
-  }))
 }
 
 # ============================================================
 # Workload Identity Federation Outputs
 # ============================================================
 
-output "workload_identity_pools" {
+publish_output "workload_identity_pools" {
   description = "Workload Identity pools"
   value       = component.google-workload-identity-federation.workload_identity_pools
-  type = map(object({
-    name         = string
-    pool_id      = string
-    display_name = string
-    state        = string
-  }))
 }
 
-output "workload_identity_providers" {
+publish_output "workload_identity_providers" {
   description = "Workload Identity providers"
   value       = component.google-workload-identity-federation.workload_identity_providers
-  type = map(object({
-    name        = string
-    provider_id = string
-    issuer_uri  = string
-    state       = string
-  }))
 }
 
-output "service_account_bindings" {
+publish_output "service_account_bindings" {
   description = "List of service account IAM bindings for workload identity"
   value       = component.google-workload-identity-federation.service_account_bindings
-  type = list(object({
-    binding_id         = string
-    service_account_id = string
-    role               = string
-    member             = string
-  }))
 }
 
 # ============================================================
 # Kubernetes Service Accounts Outputs
 # ============================================================
 
-output "kubernetes_service_accounts" {
+publish_output "kubernetes_service_accounts" {
   description = "Created Kubernetes service accounts"
   value       = component.kubernetes-service-account.kubernetes_service_accounts
-  type = map(object({
-    name        = string
-    namespace   = string
-    annotations = map(string)
-    labels      = map(string)
-  }))
 }
 
-output "kubernetes_namespaces" {
+publish_output "kubernetes_namespaces" {
   description = "Created Kubernetes namespaces"
   value       = component.kubernetes-service-account.kubernetes_namespaces
-  type = map(object({
-    name = string
-  }))
 }
 
 # ============================================================
 # Summary Output
 # ============================================================
 
-output "deployment_summary" {
+publish_output "deployment_summary" {
   description = "Summary of the K3s Workload Identity Federation deployment"
   value = {
     gcp_project = var.gcp_project_name
