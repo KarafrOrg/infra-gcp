@@ -17,17 +17,6 @@ output "gcp_service_accounts" {
 # Secret Manager Outputs
 # ============================================================
 
-output "k8s_ca_secrets" {
-  description = "K3s CA certificate secrets"
-  value       = component.google-secret-manager.k8s_ca_secrets
-  type = map(object({
-    secret_id      = string
-    secret_name    = string
-    secret_version = string
-    project        = string
-  }))
-  sensitive = true
-}
 
 output "rotation_pub_sub_topics" {
   description = "Pub/Sub topics for CA certificate rotation notifications"
@@ -108,10 +97,10 @@ output "deployment_summary" {
     gcp_project = var.gcp_project_name
     region      = var.gcp_region
 
-    service_accounts_count = length(component.google-service-account.service_accounts)
-    ca_certificates_count  = length(component.google-secret-manager.k8s_ca_secrets)
-    wif_pools_count        = length(component.google-workload-identity-federation.workload_identity_pools)
-    k8s_namespaces_count   = length(component.kubernetes-service-account.kubernetes_namespaces)
+    service_accounts_count     = length(component.google-service-account.service_accounts)
+    rotation_topics_count      = length(component.google-secret-manager.rotation_pub_sub_topics)
+    wif_pools_count            = length(component.google-workload-identity-federation.workload_identity_pools)
+    k8s_namespaces_count       = length(component.kubernetes-service-account.kubernetes_namespaces)
     k8s_service_accounts_count = length(component.kubernetes-service-account.kubernetes_service_accounts)
 
     rotation_topics = [

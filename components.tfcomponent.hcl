@@ -1,3 +1,7 @@
+# ============================================================
+# GCP Service Accounts
+# ============================================================
+
 component "google-service-account" {
   source = "./modules/google-service-account"
 
@@ -11,6 +15,10 @@ component "google-service-account" {
   }
 }
 
+# ============================================================
+# Secret Manager - K3s CA Certificate Pub/Sub Topics
+# ============================================================
+
 component "google-secret-manager" {
   source = "./modules/google-secret-manager"
 
@@ -19,12 +27,15 @@ component "google-secret-manager" {
   }
 
   inputs = {
-    gcp_project_name             = var.gcp_project_name
-    k8s_ca_certificates          = var.k8s_ca_certificates
-    secret_replication_automatic = var.secret_replication_automatic
-    pub_sub_topic_prefix         = var.pub_sub_topic_prefix
+    gcp_project_name        = var.gcp_project_name
+    k3s_ca_certificate_refs = var.k3s_ca_certificate_refs
+    pub_sub_topic_prefix    = var.pub_sub_topic_prefix
   }
 }
+
+# ============================================================
+# Workload Identity Federation
+# ============================================================
 
 component "google-workload-identity-federation" {
   source = "./modules/google-workload-identity-federation"
@@ -35,13 +46,17 @@ component "google-workload-identity-federation" {
 
   inputs = {
     gcp_project_name = var.gcp_project_name
-    k8s_clusters     = var.k8s_clusters
+    k3s_clusters     = var.k3s_clusters
   }
 
   depends_on = [
     component.google-service-account
   ]
 }
+
+# ============================================================
+# Kubernetes Service Accounts
+# ============================================================
 
 component "kubernetes-service-account" {
   source = "./modules/kubernetes-service-account"
@@ -51,7 +66,7 @@ component "kubernetes-service-account" {
   }
 
   inputs = {
-    k8s_clusters = var.k8s_clusters
+    k3s_clusters = var.k3s_clusters
   }
 
   depends_on = [

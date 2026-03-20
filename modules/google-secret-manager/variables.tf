@@ -3,27 +3,17 @@ variable "gcp_project_name" {
   type        = string
 }
 
-variable "k8s_ca_certificates" {
-  description = "Map of K3s cluster CA certificates to store in Secret Manager"
+variable "k3s_ca_certificate_refs" {
+  description = "Map of K3s cluster CA certificate references for Pub/Sub topic creation (certificates must be managed externally)"
   type = map(object({
-    ca_certificate      = string           # PEM-encoded CA certificate
-    display_name        = optional(string)
-    description         = optional(string)
-    rotation_period     = optional(string, "2592000s") # 30 days default
-    enable_pub_sub      = optional(bool, true)
-    labels              = optional(map(string), {})
+    enable_pub_sub = optional(bool, true)
+    labels         = optional(map(string), {})
   }))
   default = {}
-}
-
-variable "secret_replication_automatic" {
-  description = "Whether to use automatic replication for secrets"
-  type        = bool
-  default     = true
 }
 
 variable "pub_sub_topic_prefix" {
   description = "Prefix for Pub/Sub topic names for secret rotation notifications"
   type        = string
-  default     = "secret-rotation"
+  default     = "k3s-ca-rotation"
 }

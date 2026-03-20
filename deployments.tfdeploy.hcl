@@ -19,7 +19,8 @@ deployment "production" {
     gcp_region       = "europe-central2"
     gcp_zone         = "europe-central2-a"
 
-    k8s_context_name = "k8s-production"
+    # Kubernetes configuration
+    k3s_context_name = "k3s-production"
 
     # GCP Service Accounts
     gcp_service_service_accounts = {
@@ -56,23 +57,26 @@ deployment "production" {
       }
     }
 
-    k8s_ca_certificates = {
-      "k8s-production" = {
-        ca_certificate = file("${path.root}/ca-certificates/k8s-production-ca.pem")
-        display_name   = "K3s Production Cluster CA Certificate"
-        description    = "CA certificate for k8s-production cluster - rotates when K3s CA changes"
-        rotation_period = "2592000s" # 30 days
+    # K3s CA Certificate References (managed externally in Secret Manager)
+    # Upload CA certificates to Secret Manager manually or via CI/CD before running this
+    # This only creates Pub/Sub topics for rotation notifications
+    k3s_ca_certificate_refs = {
+      "k3s-production" = {
         enable_pub_sub = true
         labels = {
           environment = "production"
-          cluster     = "k8s-production"
+          cluster     = "k3s-production"
           managed_by  = "terraform-stacks"
         }
       }
     }
 
-    k8s_clusters = {
-      "k8s-production" = {
+    # Pub/Sub configuration
+    pub_sub_topic_prefix = "k3s-ca-rotation"
+
+    # K3s Workload Identity Federation
+    k3s_clusters = {
+      "k3s-production" = {
         issuer_uri        = "https://kubernetes.default.svc.cluster.local"
         display_name      = "K3s Production Cluster"
         description       = "Workload Identity Federation for production K3s cluster"
