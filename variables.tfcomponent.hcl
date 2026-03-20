@@ -35,14 +35,14 @@ variable "gcp_service_account_email" {
 # endregion
 
 # region Kubernetes provider variables
-variable "k3s_kubeconfig_path" {
-  description = "Path to kubeconfig file for K3s cluster"
+variable "k8s_kubeconfig_path" {
+  description = "Path to kubeconfig file for k8s cluster"
   type        = string
   default     = "~/.kube/config"
 }
 
-variable "k3s_context_name" {
-  description = "Kubernetes context name for K3s cluster"
+variable "k8s_context_name" {
+  description = "Kubernetes context name for k8s cluster"
   type        = string
 }
 # endregion
@@ -59,9 +59,9 @@ variable gcp_service_service_accounts {
 }
 # endregion
 
-# region K3s CA Certificate References (managed externally in Secret Manager)
-variable "k3s_ca_certificate_refs" {
-  description = "Map of K3s clusters for Pub/Sub topic creation (CA certificates must be managed externally)"
+# region k8s CA Certificate References (managed externally in Secret Manager)
+variable "k8s_ca_certificate_refs" {
+  description = "Map of k8s clusters for Pub/Sub topic creation (CA certificates must be managed externally)"
   type = map(object({
     enable_pub_sub = optional(bool, true)
     labels         = optional(map(string), {})
@@ -72,7 +72,7 @@ variable "k3s_ca_certificate_refs" {
 variable "pub_sub_topic_prefix" {
   description = "Prefix for Pub/Sub topic names for secret rotation notifications"
   type        = string
-  default     = "k3s-ca-rotation"
+  default     = "k8s-ca-rotation"
 }
 
 variable "secret_replication_automatic" {
@@ -82,9 +82,9 @@ variable "secret_replication_automatic" {
 }
 # endregion
 
-# region K3s Workload Identity Federation
-variable "k3s_clusters" {
-  description = "Map of K3s cluster configurations for workload identity federation"
+# region k8s Workload Identity Federation
+variable "k8s_clusters" {
+  description = "Map of k8s cluster configurations for workload identity federation"
   type = map(object({
     issuer_uri          = string
     display_name        = optional(string)

@@ -1,5 +1,5 @@
 resource "google_pubsub_topic" "secret_rotation" {
-  for_each = { for k, v in var.k3s_ca_certificate_refs : k => v if v.enable_pub_sub }
+  for_each = { for k, v in var.k8s_ca_certificate_refs : k => v if v.enable_pub_sub }
 
   name    = "${var.pub_sub_topic_prefix}-${each.key}"
   project = var.gcp_project_name
@@ -14,7 +14,7 @@ resource "google_pubsub_topic" "secret_rotation" {
 }
 
 resource "google_pubsub_topic_iam_member" "secret_manager_publisher" {
-  for_each = { for k, v in var.k3s_ca_certificate_refs : k => v if v.enable_pub_sub }
+  for_each = { for k, v in var.k8s_ca_certificate_refs : k => v if v.enable_pub_sub }
 
   project = var.gcp_project_name
   topic   = google_pubsub_topic.secret_rotation[each.key].name

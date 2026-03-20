@@ -1,5 +1,5 @@
 variable "k8s_clusters" {
-  description = "Map of K3s cluster configurations for Kubernetes service account creation"
+  description = "Map of k8s cluster configurations for Kubernetes service account creation"
   type = map(object({
     default_namespace = optional(string, "default")
     kubernetes_service_accounts = map(object({

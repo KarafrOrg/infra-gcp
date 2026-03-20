@@ -54,7 +54,7 @@ publish_output "kubernetes_namespaces" {
 # ============================================================
 
 publish_output "deployment_summary" {
-  description = "Summary of the K3s Workload Identity Federation deployment"
+  description = "Summary of the k8s Workload Identity Federation deployment"
   value = {
     gcp_project = var.gcp_project_name
     region      = var.gcp_region

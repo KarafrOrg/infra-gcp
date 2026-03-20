@@ -16,7 +16,7 @@ component "google-service-account" {
 }
 
 # ============================================================
-# Secret Manager - K3s CA Certificate Pub/Sub Topics
+# Secret Manager - k8s CA Certificate Pub/Sub Topics
 # ============================================================
 
 component "google-secret-manager" {
@@ -28,7 +28,7 @@ component "google-secret-manager" {
 
   inputs = {
     gcp_project_name        = var.gcp_project_name
-    k3s_ca_certificate_refs = var.k3s_ca_certificate_refs
+    k8s_ca_certificate_refs = var.k8s_ca_certificate_refs
     pub_sub_topic_prefix    = var.pub_sub_topic_prefix
   }
 }
@@ -46,7 +46,7 @@ component "google-workload-identity-federation" {
 
   inputs = {
     gcp_project_name = var.gcp_project_name
-    k3s_clusters     = var.k3s_clusters
+    k8s_clusters     = var.k8s_clusters
   }
 
   depends_on = [
@@ -62,11 +62,11 @@ component "kubernetes-service-account" {
   source = "./modules/kubernetes-service-account"
 
   providers = {
-    kubernetes = provider.kubernetes.k3s
+    kubernetes = provider.kubernetes.k8s
   }
 
   inputs = {
-    k3s_clusters = var.k3s_clusters
+    k8s_clusters = var.k8s_clusters
   }
 
   depends_on = [

@@ -6,7 +6,7 @@ resource "google_iam_workload_identity_pool" "k8s_clusters" {
   for_each                  = var.k8s_clusters
   workload_identity_pool_id = each.key
   display_name              = try(each.value.display_name, each.key)
-  description               = try(each.value.description, "Workload Identity Pool for K3s cluster ${each.key}")
+  description               = try(each.value.description, "Workload Identity Pool for k8s cluster ${each.key}")
   project                   = var.gcp_project_name
 }
 

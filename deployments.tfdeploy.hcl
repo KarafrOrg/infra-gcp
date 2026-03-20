@@ -20,13 +20,13 @@ deployment "production" {
     gcp_zone         = "europe-central2-a"
 
     # Kubernetes configuration
-    k3s_context_name = "k3s-production"
+    k8s_context_name = "k8s-production"
 
     # GCP Service Accounts
     gcp_service_service_accounts = {
       "k8s-admin" = {
-        display_name = "K3s Admin Service Account"
-        description  = "Service account for K3s cluster administration"
+        display_name = "k8s Admin Service Account"
+        description  = "Service account for k8s cluster administration"
         roles = [
           "roles/container.admin",
           "roles/iam.serviceAccountUser"
@@ -34,21 +34,21 @@ deployment "production" {
       }
       "k8s-secret-reader" = {
         display_name = "K8s secrets reader service account"
-        description  = "Service account for K3s pods to read secrets from Secret Manager"
+        description  = "Service account for k8s pods to read secrets from Secret Manager"
         roles = [
           "roles/secretmanager.secretAccessor"
         ]
       }
       "k8s-storage-admin" = {
-        display_name = "K3s Storage Admin Service Account"
-        description  = "Service account for K3s pods to manage Cloud Storage"
+        display_name = "k8s Storage Admin Service Account"
+        description  = "Service account for k8s pods to manage Cloud Storage"
         roles = [
           "roles/storage.objectAdmin"
         ]
       }
       "k8s-monitoring" = {
-        display_name = "K3s Monitoring Service Account"
-        description  = "Service account for K3s monitoring workloads"
+        display_name = "k8s Monitoring Service Account"
+        description  = "Service account for k8s monitoring workloads"
         roles = [
           "roles/monitoring.metricWriter",
           "roles/logging.logWriter",
@@ -57,29 +57,29 @@ deployment "production" {
       }
     }
 
-    # K3s CA Certificate References (managed externally in Secret Manager)
+    # k8s CA Certificate References (managed externally in Secret Manager)
     # Upload CA certificates to Secret Manager manually or via CI/CD before running this
     # This only creates Pub/Sub topics for rotation notifications
-    k3s_ca_certificate_refs = {
-      "k3s-production" = {
+    k8s_ca_certificate_refs = {
+      "k8s-production" = {
         enable_pub_sub = true
         labels = {
           environment = "production"
-          cluster     = "k3s-production"
+          cluster     = "k8s-production"
           managed_by  = "terraform-stacks"
         }
       }
     }
 
     # Pub/Sub configuration
-    pub_sub_topic_prefix = "k3s-ca-rotation"
+    pub_sub_topic_prefix = "k8s-ca-rotation"
 
-    # K3s Workload Identity Federation
-    k3s_clusters = {
-      "k3s-production" = {
+    # k8s Workload Identity Federation
+    k8s_clusters = {
+      "k8s-production" = {
         issuer_uri        = "https://kubernetes.default.svc.cluster.local"
-        display_name      = "K3s Production Cluster"
-        description       = "Workload Identity Federation for production K3s cluster"
+        display_name      = "k8s Production Cluster"
+        description       = "Workload Identity Federation for production k8s cluster"
         default_namespace = "default"
         allowed_audiences = ["sts.googleapis.com"]
 

@@ -4,7 +4,7 @@ variable "gcp_project_name" {
 }
 
 variable "k8s_clusters" {
-  description = "Map of K3s cluster configurations for workload identity federation"
+  description = "Map of k8s cluster configurations for workload identity federation"
   type = map(object({
     issuer_uri          = string
     display_name        = optional(string)
