@@ -24,9 +24,6 @@ provider "google" "main" {
 
 provider "kubernetes" "k8s" {
   config {
-    client_certificate     = var.kube_client_cert_data
-    client_key             = var.kube_client_key_data
-    cluster_ca_certificate = var.kube_client_ca_cert
-    host                   = var.kube_host
+    host                   = "https://37.187.159.125:6443"
   }
 }
