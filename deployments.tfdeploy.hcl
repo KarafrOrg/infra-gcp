@@ -59,6 +59,15 @@ deployment "production" {
       }
     }
 
-    workload_identity_federations = {}
+    workload_identity_federations = {
+      "k3s-admin" = {
+        display_name              = "K3s Admin Operations"
+        description               = "WIF for cluster administration tasks"
+        issuer_uri                = "https://kubernetes.default.svc.cluster.local"
+        namespace                 = "kube-system"
+        ksa_name                  = "cluster-admin"
+        gcp_service_account_email = "k8s-admin@karafra-net.iam.gserviceaccount.com"
+      }
+    }
   }
 }
