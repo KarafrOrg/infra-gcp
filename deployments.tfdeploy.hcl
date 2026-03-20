@@ -28,6 +28,39 @@ deployment "production" {
           "roles/iam.serviceAccountUser"
         ]
       }
+      "secret-manager-reader" = {
+        display_name = "Secrets Manager Reader Service Account"
+        description  = "Service account for reading secrets from Google Secret Manager"
+        roles = [
+          "roles/secretmanager.secretAccessor",
+          "roles/iam.serviceAccountUser"
+        ]
+      }
+      "secret-manager-writer" = {
+        display_name = "Secrets Manager Writer Service Account"
+        description  = "Service account for writing secrets to Google Secret Manager"
+        roles = [
+          "roles/secretmanager.secretVersionAdder",
+          "roles/iam.serviceAccountUser"
+        ]
+      }
+      "secret-manager-operator" = {
+        display_name = "Secrets Manager Operator Service Account"
+        description  = "Service account for managing secrets in Google Secret Manager with limited permissions"
+        roles = [
+          "roles/secretmanager.secretAccessor",
+          "roles/secretmanager.secretVersionAdder",
+          "roles/iam.serviceAccountUser"
+        ]
+      }
+      "secrets-manager-admin" = {
+        display_name = "Secrets Manager Admin Service Account"
+        description  = "Service account for managing secrets in Google Secret Manager"
+        roles = [
+          "roles/secretmanager.admin",
+          "roles/iam.serviceAccountUser"
+        ]
+      }
     }
   }
 }
