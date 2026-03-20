@@ -1,19 +1,3 @@
-terraform {
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = "~> 7.7"
-    }
-  }
-}
-
-# Note: CA certificates must be managed externally (manually or via CI/CD)
-# This module only manages Pub/Sub topics for rotation notifications
-
-# ============================================================
-# Pub/Sub Topics for Secret Rotation Notifications
-# ============================================================
-
 resource "google_pubsub_topic" "secret_rotation" {
   for_each = { for k, v in var.k3s_ca_certificate_refs : k => v if v.enable_pub_sub }
 
@@ -29,10 +13,6 @@ resource "google_pubsub_topic" "secret_rotation" {
   )
 }
 
-# ============================================================
-# IAM for Pub/Sub Topic Access
-# ============================================================
-
 resource "google_pubsub_topic_iam_member" "secret_manager_publisher" {
   for_each = { for k, v in var.k3s_ca_certificate_refs : k => v if v.enable_pub_sub }
 
@@ -45,4 +25,3 @@ resource "google_pubsub_topic_iam_member" "secret_manager_publisher" {
 data "google_project" "project" {
   project_id = var.gcp_project_name
 }
-

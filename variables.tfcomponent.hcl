@@ -74,6 +74,12 @@ variable "pub_sub_topic_prefix" {
   type        = string
   default     = "k3s-ca-rotation"
 }
+
+variable "secret_replication_automatic" {
+  description = "Whether to use automatic replication for secrets (true) or user-managed replication (false)"
+  type        = bool
+  default     = true
+}
 # endregion
 
 # region K3s Workload Identity Federation
