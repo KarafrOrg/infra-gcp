@@ -21,5 +21,3 @@ provider "google" "main" {
     }
   }
 }
-
-provider "kubernetes" "k8s" {}
