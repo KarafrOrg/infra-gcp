@@ -4,7 +4,7 @@ store "varset" "credentials" {
 }
 
 identity_token "gcp" {
-  audience = ["hcp.workload.identity"]
+  audience = [store.varset.credentials.gcp_audience]
 }
 
 deployment "production" {
