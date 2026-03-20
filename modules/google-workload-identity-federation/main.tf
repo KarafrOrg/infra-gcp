@@ -1,7 +1,3 @@
-# ============================================================
-# Workload Identity Federation - Pools
-# ============================================================
-
 resource "google_iam_workload_identity_pool" "k8s_clusters" {
   for_each                  = var.k8s_clusters
   workload_identity_pool_id = each.key
@@ -9,10 +5,6 @@ resource "google_iam_workload_identity_pool" "k8s_clusters" {
   description               = try(each.value.description, "Workload Identity Pool for k8s cluster ${each.key}")
   project                   = var.gcp_project_name
 }
-
-# ============================================================
-# Workload Identity Federation - OIDC Providers
-# ============================================================
 
 resource "google_iam_workload_identity_pool_provider" "k8s_oidc" {
   for_each = var.k8s_clusters
@@ -24,28 +16,25 @@ resource "google_iam_workload_identity_pool_provider" "k8s_oidc" {
   oidc {
     issuer_uri        = each.value.issuer_uri
     allowed_audiences = each.value.allowed_audiences
+    jwks_json         = try(each.value.jwks_json, null)
   }
 
   attribute_mapping = {
-    "google.subject"                   = "assertion.sub"
-    "attribute.namespace"              = "assertion['kubernetes.io/serviceaccount/namespace']"
-    "attribute.service_account"        = "assertion['kubernetes.io/serviceaccount/service-account.name']"
-    "attribute.service_account_uid"    = "assertion['kubernetes.io/serviceaccount/uid']"
+    "google.subject"                = "assertion.sub"
+    "attribute.namespace"           = "assertion['kubernetes.io/serviceaccount/namespace']"
+    "attribute.service_account"     = "assertion['kubernetes.io/serviceaccount/service-account.name']"
+    "attribute.service_account_uid" = "assertion['kubernetes.io/serviceaccount/uid']"
   }
 }
-
-# ============================================================
-# Workload Identity Federation - IAM Bindings
-# ============================================================
 
 locals {
   # Flatten K8s service accounts to create IAM bindings
   k8s_service_accounts = flatten([
     for cluster_key, cluster_value in var.k8s_clusters : [
       for ksa_key, ksa_value in cluster_value.kubernetes_service_accounts : {
-        cluster_key         = cluster_key
-        ksa_key             = ksa_key
-        namespace           = coalesce(ksa_value.namespace, cluster_value.default_namespace)
+        cluster_key               = cluster_key
+        ksa_key                   = ksa_key
+        namespace                 = coalesce(ksa_value.namespace, cluster_value.default_namespace)
         gcp_service_account_email = ksa_value.gcp_service_account_email
       }
     ]

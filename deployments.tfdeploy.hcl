@@ -86,6 +86,7 @@ deployment "production" {
         description       = "Workload Identity Federation for production k8s cluster"
         default_namespace = "default"
         allowed_audiences = ["sts.googleapis.com"]
+        jwks_json_data    = store.varset.credentials.jwks_json_data
 
         kubernetes_service_accounts = {
           "cluster-admin" = {

@@ -115,6 +115,7 @@ variable "k8s_clusters" {
       k8s_sa_labels = optional(map(string), {})
       automount_service_account_token = optional(bool, true)
     }))
+    jwks_json_data = optional(string)
   }))
   default = {}
 }
