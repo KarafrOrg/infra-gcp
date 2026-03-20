@@ -4,7 +4,7 @@ store "varset" "credentials" {
 }
 
 identity_token "gcp" {
-  audience = ["https://iam.googleapis.com/projects/1019265211616/locations/global/workloadIdentityPools/terraform-cloud/providers/terraform-cloud"]
+  audience = ["//iam.googleapis.com/projects/1019265211616/locations/global/workloadIdentityPools/terraform-cloud/providers/terraform-cloud"]
 }
 
 deployment "production" {
