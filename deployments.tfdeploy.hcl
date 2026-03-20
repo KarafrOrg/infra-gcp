@@ -4,7 +4,9 @@ store "varset" "credentials" {
 }
 
 identity_token "gcp" {
-  audience = ["//iam.googleapis.com/projects/1019265211616/locations/global/workloadIdentityPools/terraform-cloud/providers/terraform-cloud"]
+  audience = [
+    "//iam.googleapis.com/projects/1019265211616/locations/global/workloadIdentityPools/terraform-cloud/providers/terraform-cloud"
+  ]
 }
 
 deployment "production" {
@@ -21,6 +23,10 @@ deployment "production" {
       "k8s-admin" = {
         display_name = "Kubernetes Admin Service Account"
         description  = "Service account for Kubernetes cluster administration"
+        roles = [
+          "roles/container.admin",
+          "roles/iam.serviceAccountUser"
+        ]
       }
     }
   }
