@@ -17,7 +17,7 @@ deployment "production" {
     gcp_region       = "europe-central2"
     gcp_zone         = "europe-central2-a"
 
-    service_accounts = {
+    gcp_service_service_accounts = {
       "k8s-admin" = {
         display_name = "Kubernetes Admin Service Account"
         description  = "Service account for Kubernetes cluster administration"
