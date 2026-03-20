@@ -9,7 +9,7 @@ identity_token "gcp" {
 
 deployment "production" {
   inputs = {
-    gcp_identity_token        = identity_token.gcp.token
+    gcp_identity_token        = identity_token.gcp.jwt
     gcp_audience              = store.varset.credentials.gcp_audience
     gcp_service_account_email = store.varset.credentials.gcp_service_account_email
 
