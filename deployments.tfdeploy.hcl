@@ -59,23 +59,6 @@ deployment "production" {
       }
     }
 
-    workload_identity_federations = {
-      "k3s-secrets-prod" = {
-        display_name              = "K3s Secrets Manager - Production"
-        description               = "WIF for production secrets management"
-        issuer_uri                = "https://kubernetes.default.svc.cluster.local"
-        namespace                 = "kube-system"
-        ksa_name                  = "secrets-manager"
-        gcp_service_account_email = "secret-manager-reader@karafra-net.iam.gserviceaccount.com"
-      }
-      "k3s-admin" = {
-        display_name              = "K3s Admin Operations"
-        description               = "WIF for cluster administration tasks"
-        issuer_uri                = "https://kubernetes.default.svc.cluster.local"
-        namespace                 = "kube-system"
-        ksa_name                  = "cluster-admin"
-        gcp_service_account_email = "k8s-admin@karafra-net.iam.gserviceaccount.com"
-      }
-    }
+    workload_identity_federations = {}
   }
 }
