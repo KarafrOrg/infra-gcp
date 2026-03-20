@@ -1,13 +1,11 @@
-component "cloudflare_dns" {
-  source = "./modules/cloudflare-dns"
+component "google-service-account" {
+  source = "./modules/google-service-account"
 
   providers = {
     google = provider.google.main
   }
 
   inputs = {
-    account_id  = var.cloudflare_account_id
-    domain      = var.domain
-    dns_records = var.dns_records
+    google-service-service_accounts = var.google_service_service_accounts
   }
 }
