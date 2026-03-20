@@ -60,7 +60,7 @@ deployment "production" {
     }
 
     workload_identity_federations = {
-      "k3s-admin" = {
+      "k3s-admin-v2" = {
         display_name              = "K3s Admin Operations"
         description               = "WIF for cluster administration tasks"
         issuer_uri                = "https://kubernetes.default.svc.cluster.local"
