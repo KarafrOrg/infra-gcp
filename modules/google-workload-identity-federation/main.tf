@@ -6,7 +6,7 @@ resource "google_iam_workload_identity_pool" "simple" {
   project                   = var.gcp_project_name
 }
 
-resource "google_iam_workload_identity_pool_provider" "k3s" {
+resource "google_iam_workload_identity_pool_provider" "simple" {
   for_each = var.workload_identity_federations
 
   project                            = var.gcp_project_name
@@ -25,15 +25,16 @@ resource "google_iam_workload_identity_pool_provider" "k3s" {
   }
 }
 
-data google_project "current_project" {
-  project_id = var.gcp_project_name
-}
-
-resource "google_service_account_iam_member" "k3s" {
+resource "google_service_account_iam_member" "simple_pool_members" {
   for_each = var.workload_identity_federations
 
   service_account_id = "projects/${var.gcp_project_name}/serviceAccounts/${each.value.gcp_service_account_email}"
   role               = "roles/iam.workloadIdentityUser"
 
-  member = "principalSet://iam.googleapis.com/projects/${data.google_project.current_project.number}/locations/global/workloadIdentityPools/${each.key}/attribute.namespace/${each.value.namespace}/attribute.service_account/${each.value.ksa_name}"
+  member = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.simple[each.key].name}/attribute.namespace/${each.value.namespace}/attribute.service_account/${each.value.ksa_name}"
+
+  depends_on = [
+    google_iam_workload_identity_pool.simple,
+    google_iam_workload_identity_pool_provider.simple
+  ]
 }
