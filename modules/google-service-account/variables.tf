@@ -3,6 +3,12 @@ variable "service_accounts" {
   type = map(object({
     display_name = optional(string)
     description  = optional(string)
+    roles        = optional(list(string))
   }))
   default = {}
+}
+
+variable "gcp_project_name" {
+  description = "GCP project name"
+  type        = string
 }
