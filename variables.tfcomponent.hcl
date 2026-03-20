@@ -35,6 +35,31 @@ variable "gcp_service_account_email" {
 # endregion
 
 # region Kubernetes provider variables
+variable "KUBE_CLIENT_CERT_DATA" {
+  description = "Base64 encoded client certificate data for Kubernetes provider"
+  type        = string
+  sensitive   = true
+}
+
+variable "KUBE_CLIENT_KEY_DATA" {
+  description = "Base64 encoded client key data for Kubernetes provider"
+  type        = string
+  sensitive   = true
+}
+
+variable "KUBE_CLUSTER_CA_CERT_DATA" {
+  description = "Base64 encoded cluster CA certificate data for Kubernetes provider"
+  type        = string
+  sensitive   = true
+}
+
+variable "KUBE_HOST" {
+  description = "Kubernetes API server host URL for Kubernetes provider"
+  type        = string
+}
+# endregion
+
+# region Kubernetes provider variables
 variable "k8s_kubeconfig_path" {
   description = "Path to kubeconfig file for k8s cluster"
   type        = string
@@ -52,8 +77,8 @@ variable gcp_service_service_accounts {
   description = "Map of service account configurations"
   type = map(object({
     display_name = optional(string)
-    description  = optional(string)
-    roles        = optional(list(string))
+    description = optional(string)
+    roles = optional(list(string))
   }))
   default = {}
 }
@@ -64,7 +89,7 @@ variable "k8s_ca_certificate_refs" {
   description = "Map of k8s clusters for Pub/Sub topic creation (CA certificates must be managed externally)"
   type = map(object({
     enable_pub_sub = optional(bool, true)
-    labels         = optional(map(string), {})
+    labels = optional(map(string), {})
   }))
   default = {}
 }
@@ -86,17 +111,17 @@ variable "secret_replication_automatic" {
 variable "k8s_clusters" {
   description = "Map of k8s cluster configurations for workload identity federation"
   type = map(object({
-    issuer_uri          = string
-    display_name        = optional(string)
-    description         = optional(string)
-    default_namespace   = optional(string, "default")
-    allowed_audiences   = optional(list(string), ["sts.googleapis.com"])
+    issuer_uri = string
+    display_name = optional(string)
+    description = optional(string)
+    default_namespace = optional(string, "default")
+    allowed_audiences = optional(list(string), ["sts.googleapis.com"])
     kubernetes_service_accounts = map(object({
-      namespace                       = optional(string)
-      gcp_service_account_email       = string
-      create_k8s_sa                   = optional(bool, true)
-      k8s_sa_annotations              = optional(map(string), {})
-      k8s_sa_labels                   = optional(map(string), {})
+      namespace = optional(string)
+      gcp_service_account_email = string
+      create_k8s_sa = optional(bool, true)
+      k8s_sa_annotations = optional(map(string), {})
+      k8s_sa_labels = optional(map(string), {})
       automount_service_account_token = optional(bool, true)
     }))
   }))

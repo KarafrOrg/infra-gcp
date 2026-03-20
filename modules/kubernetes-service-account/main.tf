@@ -24,3 +24,9 @@ resource "kubernetes_service_account" "k8s_service_accounts" {
   automount_service_account_token = each.value.automount_service_account_token
 }
 
+provider "kubernetes" {
+  client_certificate     = var.KUBE_CLIENT_CERT_DATA
+  client_key             = var.KUBE_CLIENT_KEY_DATA
+  cluster_ca_certificate = var.KUBE_CLUSTER_CA_CERT_DATA
+  host                   = var.KUBE_HOST
+}
