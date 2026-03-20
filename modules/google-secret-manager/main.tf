@@ -33,7 +33,7 @@ resource "google_pubsub_topic_iam_member" "secret_manager_publisher" {
   project = var.gcp_project_name
   topic   = google_pubsub_topic.secret_rotation[each.key].name
   role    = "roles/pubsub.publisher"
-  member  = "serviceAccount:${google_project_service_identity.secretmanager_agent.email}"
+  member  = "service-1019265211616@gcp-sa-secretmanager.iam.gserviceaccount.com"
 }
 
 data "google_project" "project" {
