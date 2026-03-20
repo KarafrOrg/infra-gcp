@@ -35,25 +35,25 @@ variable "gcp_service_account_email" {
 # endregion
 
 # region Kubernetes provider variables
-variable "KUBE_CLIENT_CERT_DATA" {
+variable "kube_client_cert_data" {
   description = "Base64 encoded client certificate data for Kubernetes provider"
   type        = string
   sensitive   = true
 }
 
-variable "KUBE_CLIENT_KEY_DATA" {
+variable "kube_client_key_data" {
   description = "Base64 encoded client key data for Kubernetes provider"
   type        = string
   sensitive   = true
 }
 
-variable "KUBE_CLUSTER_CA_CERT_DATA" {
+variable "kube_client_ca_cert" {
   description = "Base64 encoded cluster CA certificate data for Kubernetes provider"
   type        = string
   sensitive   = true
 }
 
-variable "KUBE_HOST" {
+variable "kube_host" {
   description = "Kubernetes API server host URL for Kubernetes provider"
   type        = string
 }

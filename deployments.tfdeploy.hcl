@@ -17,14 +17,14 @@ deployment "production" {
 
     gcp_project_name = "karafra-net"
     gcp_region       = "europe-central2"
-    gcp_zone         = "europe-central2-a"
+    gcp_zone = "europe-central2-a"
 
     # Kubernetes configuration
-    k8s_context_name = "k8s-production"
-    KUBE_CLIENT_CERT_DATA     = var.KUBE_CLIENT_CERT_DATA
-    KUBE_CLIENT_KEY_DATA      = var.KUBE_CLIENT_KEY_DATA
-    KUBE_CLUSTER_CA_CERT_DATA = var.KUBE_CLUSTER_CA_CERT_DATA
-    KUBE_HOST                 = var.KUBE_HOST
+    k8s_context_name      = "k8s-production"
+    kube_host             = store.varset.credentials.kube_host
+    kube_client_cert_data = store.varset.credentials.kube_client_cert_data
+    kube_client_key_data  = store.varset.credentials.kube_client_key_data
+    kube_client_ca_cert = store.varset.credentials.kube_client_ca_cert
 
     # GCP Service Accounts
     gcp_service_service_accounts = {
