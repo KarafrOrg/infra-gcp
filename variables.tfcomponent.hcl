@@ -34,6 +34,19 @@ variable "gcp_service_account_email" {
 }
 # endregion
 
+# region Kubernetes provider variables
+variable "k8s_kubeconfig_path" {
+  description = "Path to kubeconfig file for K3s cluster"
+  type        = string
+  default     = "~/.kube/config"
+}
+
+variable "k8s_context_name" {
+  description = "Kubernetes context name for K3s cluster"
+  type        = string
+}
+# endregion
+
 # region Service accounts
 variable gcp_service_service_accounts {
   description = "Map of service account configurations"
@@ -46,15 +59,50 @@ variable gcp_service_service_accounts {
 }
 # endregion
 
-# region Workload Identity Federation
-variable "workload_identity_federations" {
+# region K3s CA Certificates
+variable "k8s_ca_certificates" {
+  description = "Map of K3s cluster CA certificates to store in Secret Manager"
   type = map(object({
-    issuer_uri                = string
-    namespace                 = string
-    ksa_name                  = string
-    gcp_service_account_email = string
-    display_name              = optional(string)
-    description               = optional(string)
+    ca_certificate      = string
+    display_name        = optional(string)
+    description         = optional(string)
+    rotation_period     = optional(string, "2592000s") # 30 days default
+    enable_pub_sub      = optional(bool, true)
+    labels              = optional(map(string), {})
+  }))
+  default = {}
+}
+
+variable "secret_replication_automatic" {
+  description = "Whether to use automatic replication for secrets"
+  type        = bool
+  default     = true
+}
+
+variable "pub_sub_topic_prefix" {
+  description = "Prefix for Pub/Sub topic names for secret rotation notifications"
+  type        = string
+  default     = "k8s-ca-rotation"
+}
+# endregion
+
+# region K3s Workload Identity Federation
+variable "k8s_clusters" {
+  description = "Map of K3s cluster configurations for workload identity federation"
+  type = map(object({
+    issuer_uri          = string
+    display_name        = optional(string)
+    description         = optional(string)
+    default_namespace   = optional(string, "default")
+    allowed_audiences   = optional(list(string), ["sts.googleapis.com"])
+    kubernetes_service_accounts = map(object({
+      namespace                       = optional(string)
+      gcp_service_account_email       = string
+      create_k8s_sa                   = optional(bool, true)
+      k8s_sa_annotations              = optional(map(string), {})
+      k8s_sa_labels                   = optional(map(string), {})
+      automount_service_account_token = optional(bool, true)
+    }))
   }))
   default = {}
 }

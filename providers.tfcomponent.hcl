@@ -3,6 +3,10 @@ required_providers {
     source  = "hashicorp/google"
     version = "~> 7.24"
   }
+  kubernetes = {
+    source  = "hashicorp/kubernetes"
+    version = "~> 2.35"
+  }
 }
 
 provider "google" "main" {
@@ -15,6 +19,13 @@ provider "google" "main" {
       service_account_email = var.gcp_service_account_email
       identity_token        = var.gcp_identity_token
     }
+  }
+}
+
+provider "kubernetes" "k3s" {
+  config {
+    config_path    = var.k8s_kubeconfig_path
+    config_context = var.k8s_context_name
   }
 }
 
