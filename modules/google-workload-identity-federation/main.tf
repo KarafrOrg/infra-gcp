@@ -11,7 +11,7 @@ resource "google_iam_workload_identity_pool_provider" "k3s" {
 
   project                            = var.gcp_project_name
   workload_identity_pool_id          = google_iam_workload_identity_pool.simple[each.key].workload_identity_pool_id
-  workload_identity_pool_provider_id = "k3s"
+  workload_identity_pool_provider_id = each.key
 
   oidc {
     issuer_uri        = each.value.issuer_uri
