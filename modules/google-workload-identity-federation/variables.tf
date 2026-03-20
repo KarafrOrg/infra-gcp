@@ -15,7 +15,7 @@ variable "k8s_clusters" {
       namespace                 = optional(string)
       gcp_service_account_email = string
     }))
-    jwks_json = optional(string)
+    jwks_json_data = optional(string)
   }))
   default = {}
 }

@@ -16,7 +16,7 @@ resource "google_iam_workload_identity_pool_provider" "k8s_oidc" {
   oidc {
     issuer_uri        = each.value.issuer_uri
     allowed_audiences = each.value.allowed_audiences
-    jwks_json         = try(each.value.jwks_json, null)
+    jwks_json         = try(each.value.jwks_json_data, null) ? jsondecode(base64decode(each.value.jwks_json_data)) : null
   }
 
   attribute_mapping = {
