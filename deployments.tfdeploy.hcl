@@ -21,11 +21,6 @@ deployment "production" {
       "k8s-admin" = {
         display_name = "Kubernetes Admin Service Account"
         description  = "Service account for Kubernetes cluster administration"
-        roles = [
-          "roles/container.admin",
-          "roles/iam.serviceAccountUser",
-          "roles/compute.admin"
-        ]
       }
     }
   }
