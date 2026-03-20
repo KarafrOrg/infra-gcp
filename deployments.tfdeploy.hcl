@@ -32,16 +32,14 @@ deployment "production" {
         display_name = "Secrets Manager Reader Service Account"
         description  = "Service account for reading secrets from Google Secret Manager"
         roles = [
-          "roles/secretmanager.secretAccessor",
-          "roles/iam.serviceAccountUser"
+          "roles/secretmanager.secretAccessor"
         ]
       }
       "secret-manager-writer" = {
         display_name = "Secrets Manager Writer Service Account"
         description  = "Service account for writing secrets to Google Secret Manager"
         roles = [
-          "roles/secretmanager.secretVersionAdder",
-          "roles/iam.serviceAccountUser"
+          "roles/secretmanager.secretVersionAdder"
         ]
       }
       "secret-manager-operator" = {
@@ -49,16 +47,14 @@ deployment "production" {
         description  = "Service account for managing secrets in Google Secret Manager with limited permissions"
         roles = [
           "roles/secretmanager.secretAccessor",
-          "roles/secretmanager.secretVersionAdder",
-          "roles/iam.serviceAccountUser"
+          "roles/secretmanager.secretVersionAdder"
         ]
       }
       "secrets-manager-admin" = {
         display_name = "Secrets Manager Admin Service Account"
         description  = "Service account for managing secrets in Google Secret Manager"
         roles = [
-          "roles/secretmanager.admin",
-          "roles/iam.serviceAccountUser"
+          "roles/secretmanager.admin"
         ]
       }
     }
