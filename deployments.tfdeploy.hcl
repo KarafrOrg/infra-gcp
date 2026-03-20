@@ -21,6 +21,10 @@ deployment "production" {
 
     # Kubernetes configuration
     k8s_context_name = "k8s-production"
+    KUBE_CLIENT_CERT_DATA     = var.KUBE_CLIENT_CERT_DATA
+    KUBE_CLIENT_KEY_DATA      = var.KUBE_CLIENT_KEY_DATA
+    KUBE_CLUSTER_CA_CERT_DATA = var.KUBE_CLUSTER_CA_CERT_DATA
+    KUBE_HOST                 = var.KUBE_HOST
 
     # GCP Service Accounts
     gcp_service_service_accounts = {
