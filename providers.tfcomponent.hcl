@@ -22,10 +22,5 @@ provider "google" "main" {
   }
 }
 
-provider "kubernetes" "k8s" {
-  config {
-    config_path    = var.k8s_kubeconfig_path
-    config_context = var.k8s_context_name
-  }
-}
+provider "kubernetes" "k8s" {}
 
