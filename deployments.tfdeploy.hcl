@@ -27,6 +27,15 @@ deployment "production" {
 
     # GCP Service Accounts
     gcp_service_service_accounts = {
+      "github-secret-rotator" = {
+        display_name = "GitHub Secret Rotator Service Account"
+        description  = "Service account for GitHub secret rotation workflows"
+        roles = [
+          "roles/secretmanager.secretAccessor",
+          "roles/secretmanager.secretVersionManager",
+          "roles/secretmanager.viewer"
+        ]
+      }
       "k8s-admin" = {
         display_name = "k8s Admin Service Account"
         description  = "Service account for k8s cluster administration"
