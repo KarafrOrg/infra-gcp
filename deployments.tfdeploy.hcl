@@ -33,7 +33,8 @@ deployment "production" {
         roles = [
           "roles/secretmanager.secretAccessor",
           "roles/secretmanager.secretVersionManager",
-          "roles/secretmanager.viewer"
+          "roles/secretmanager.viewer",
+          "roles/iam.serviceAccountTokenCreator"
         ]
       }
       "k8s-admin" = {
