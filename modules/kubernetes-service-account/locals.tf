@@ -16,6 +16,6 @@ locals {
 
   k8s_service_accounts_map = {
     for item in local.k8s_service_accounts :
-    "${item.cluster_key}-${item.namespace}-${item.ksa_key}" => item
+    "${item["cluster_key"]}-${item["namespace"]}-${item["ksa_key"]}" => item
   }
 }
