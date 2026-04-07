@@ -25,7 +25,7 @@ deployment "production" {
     kube_client_ca_cert   = store.varset.credentials.kube_client_ca_cert
 
     gcp_service_service_accounts = {
-      "github-actions" = {
+      "github-actions-infra-cluster" = {
         display_name = "GitHub Actions Service Account"
         description  = "Service account for GitHub Actions workflows"
         roles = [
@@ -147,7 +147,7 @@ deployment "production" {
 
         service_account_bindings = {
           "infra-cluster" = {
-            service_account_email = "github-actions@karafra-net.iam.gserviceaccount.com"
+            service_account_email = "github-actions-infra-cluster@karafra-net.iam.gserviceaccount.com"
             attribute_name        = "repository"
             attribute_value       = "KarafrOrg/infra-cluster"
           }
