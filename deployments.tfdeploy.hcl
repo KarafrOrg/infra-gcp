@@ -31,6 +31,7 @@ deployment "production" {
         roles = [
           "roles/iam.workloadIdentityUser",
           "roles/secretmanager.secretAccessor",
+          "roles/secretmanager.viewer",
           "roles/iam.serviceAccountTokenCreator",
         ]
       }
