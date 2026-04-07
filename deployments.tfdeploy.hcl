@@ -123,7 +123,7 @@ deployment "production" {
     }
     external_identity_pools = {
       "github-actions" = {
-        display_name = "GitHub actions WIF pool - KarafrOrg"
+        display_name = "GitHub actions - KarafrOrg"
         description  = "Workload identity for GitHub Actions workflows"
 
         providers = {
