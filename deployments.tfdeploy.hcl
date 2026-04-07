@@ -17,16 +17,23 @@ deployment "production" {
 
     gcp_project_name = "karafra-net"
     gcp_region       = "europe-central2"
-    gcp_zone = "europe-central2-a"
+    gcp_zone         = "europe-central2-a"
 
-    # Kubernetes configuration
     kube_host             = store.varset.credentials.kube_host
     kube_client_cert_data = store.varset.credentials.kube_client_cert_data
     kube_client_key_data  = store.varset.credentials.kube_client_key_data
-    kube_client_ca_cert = store.varset.credentials.kube_client_ca_cert
+    kube_client_ca_cert   = store.varset.credentials.kube_client_ca_cert
 
-    # GCP Service Accounts
     gcp_service_service_accounts = {
+      "github-actions" = {
+        display_name = "GitHub Actions Service Account"
+        description  = "Service account for GitHub Actions workflows"
+        roles = [
+          "roles/iam.workloadIdentityUser",
+          "roles/secretmanager.secretAccessor",
+          "roles/iam.serviceAccountTokenCreator",
+        ]
+      }
       "github-secret-rotator" = {
         display_name = "GitHub Secret Rotator Service Account"
         description  = "Service account for GitHub secret rotation workflows"
@@ -71,9 +78,6 @@ deployment "production" {
       }
     }
 
-    # k8s CA Certificate References (managed externally in Secret Manager)
-    # Upload CA certificates to Secret Manager manually or via CI/CD before running this
-    # This only creates Pub/Sub topics for rotation notifications
     k8s_ca_certificate_refs = {
       "k8s-production" = {
         enable_pub_sub = true
@@ -85,7 +89,6 @@ deployment "production" {
       }
     }
 
-    # Pub/Sub configuration
     pub_sub_topic_prefix = "k8s-ca-rotation"
 
     secret_replication_automatic = true
@@ -114,6 +117,39 @@ deployment "production" {
             namespace                 = "default"
             gcp_service_account_email = "k8s-secret-reader@karafra-net.iam.gserviceaccount.com"
             create_k8s_sa             = true
+          }
+        }
+      }
+    }
+    external_identity_pools = {
+      "github-actions" = {
+        display_name = "GitHub actions WIF pool - KarafrOrg"
+        description  = "Workload identity for GitHub Actions workflows"
+
+        providers = {
+          "github-oidc" = {
+            display_name = "GitHub OIDC"
+
+            oidc = {
+              issuer_uri = "https://token.actions.githubusercontent.com"
+            }
+
+            attribute_mapping = {
+              "google.subject"             = "assertion.sub"
+              "attribute.repository"       = "assertion.repository"
+              "attribute.repository_owner" = "assertion.repository_owner"
+              "attribute.ref"              = "assertion.ref"
+            }
+
+            attribute_condition = "assertion.repository_owner == 'KarafrOrg'"
+          }
+        }
+
+        service_account_bindings = {
+          "infra-cluster" = {
+            service_account_email = "github-actions@project.iam.gserviceaccount.com"
+            attribute_name        = "repository"
+            attribute_value       = "KarafrOrg/infra-cluster"
           }
         }
       }

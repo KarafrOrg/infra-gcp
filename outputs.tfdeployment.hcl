@@ -27,3 +27,9 @@ publish_output "kubernetes_service_accounts" {
   description = "Created Kubernetes service accounts"
   value       = component.kubernetes-service-account.kubernetes_service_accounts
 }
+
+publish_output "external_wif_provider_names" {
+  description = "External provider resource names for CI/CD authentication (GitHub, GitLab, etc.)"
+  value       = component.google-workload-identity-federation.external_provider_names
+}
+

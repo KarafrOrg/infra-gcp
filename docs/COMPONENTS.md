@@ -8,6 +8,7 @@ This document provides detailed technical reference for each Terraform component
 - [google-secret-manager](#google-secret-manager)
 - [google-workload-identity-federation](#google-workload-identity-federation)
 - [kubernetes-service-account](#kubernetes-service-account)
+- [google-workload-identity-federation-generic](#google-workload-identity-federation-generic)
 
 ## google-service-account
 
@@ -568,3 +569,326 @@ gcp_service_service_accounts = {
 - Review IAM bindings on topic
 
 See [DEPLOYMENT.md](DEPLOYMENT.md) for more troubleshooting guidance.
+
+---
+
+## google-workload-identity-federation-generic
+
+### Overview
+
+Provides flexible Workload Identity Federation for external identity providers including GitHub Actions, GitLab CI/CD, AWS, and any OIDC or SAML-based provider. This module enables authentication from CI/CD systems to GCP without using static service account keys.
+
+### Source
+
+`./modules/google-workload-identity-federation-generic`
+
+### Provider Requirements
+
+- `google` ~> 7.24
+
+### Input Variables
+
+#### `gcp_project_name`
+- **Type**: `string`
+- **Required**: Yes
+- **Description**: GCP project ID where resources will be created
+
+#### `workload_identity_pools`
+- **Type**: `map(object)`
+- **Required**: No (default: `{}`)
+- **Description**: Map of workload identity pool configurations for external providers
+- **Object Schema**:
+  ```hcl
+  {
+    display_name = optional(string)
+    description  = optional(string)
+    disabled     = optional(bool, false)
+    
+    providers = map(object({
+      display_name        = optional(string)
+      description         = optional(string)
+      disabled            = optional(bool, false)
+      attribute_mapping   = optional(map(string))
+      attribute_condition = optional(string)
+      
+      oidc = optional(object({
+        issuer_uri        = string
+        allowed_audiences = optional(list(string))
+        jwks_json         = optional(string)
+      }))
+      
+      aws = optional(object({
+        account_id = string
+      }))
+      
+      saml = optional(object({
+        idp_metadata_xml = string
+      }))
+    }))
+    
+    service_account_bindings = optional(map(object({
+      service_account_email = string
+      role                  = optional(string, "roles/iam.workloadIdentityUser")
+      attribute_name        = string
+      attribute_value       = string
+    })), {})
+  }
+  ```
+
+### Resources Created
+
+- `google_iam_workload_identity_pool` - One per pool configuration
+- `google_iam_workload_identity_pool_provider` - One per provider in each pool
+- `google_service_account_iam_member` - One per service account binding
+
+### Example Configuration
+
+#### GitHub Actions
+
+```hcl
+component "google-workload-identity-federation-generic" {
+  source = "./modules/google-workload-identity-federation-generic"
+  
+  providers = {
+    google = provider.google.main
+  }
+  
+  inputs = {
+    gcp_project_name = "my-project"
+    
+    workload_identity_pools = {
+      "github-actions" = {
+        display_name = "GitHub Actions"
+        
+        providers = {
+          "github-oidc" = {
+            oidc = {
+              issuer_uri = "https://token.actions.githubusercontent.com"
+            }
+            
+            attribute_mapping = {
+              "google.subject"       = "assertion.sub"
+              "attribute.repository" = "assertion.repository"
+            }
+            
+            attribute_condition = "assertion.repository_owner == 'YourOrg'"
+          }
+        }
+        
+        service_account_bindings = {
+          "deploy" = {
+            service_account_email = "github-deploy@my-project.iam.gserviceaccount.com"
+            attribute_name        = "repository"
+            attribute_value       = "YourOrg/your-repo"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+#### GitLab CI/CD
+
+```hcl
+workload_identity_pools = {
+  "gitlab-ci" = {
+    display_name = "GitLab CI/CD"
+    
+    providers = {
+      "gitlab-oidc" = {
+        oidc = {
+          issuer_uri        = "https://gitlab.com"
+          allowed_audiences = ["https://gitlab.com"]
+        }
+        
+        attribute_mapping = {
+          "google.subject"         = "assertion.sub"
+          "attribute.project_path" = "assertion.project_path"
+        }
+      }
+    }
+    
+    service_account_bindings = {
+      "deploy" = {
+        service_account_email = "gitlab-deploy@my-project.iam.gserviceaccount.com"
+        attribute_name        = "project_path"
+        attribute_value       = "group/project"
+      }
+    }
+  }
+}
+```
+
+### Outputs
+
+#### `workload_identity_pools`
+- **Type**: `map(object)`
+- **Description**: Map of created workload identity pools with metadata
+
+#### `workload_identity_providers`
+- **Type**: `map(object)`
+- **Description**: Map of created identity providers with configuration
+
+#### `service_account_bindings`
+- **Type**: `map(object)`
+- **Description**: Map of service account IAM bindings
+
+#### `provider_names`
+- **Type**: `map(string)`
+- **Description**: Provider resource names for use in CI/CD authentication configuration
+
+### Dependencies
+
+- `component.google-service-account` - Service accounts must exist before binding
+
+### Usage in CI/CD
+
+#### GitHub Actions Workflow
+
+```yaml
+name: Deploy
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/123456789/locations/global/workloadIdentityPools/github-actions/providers/github-oidc'
+          service_account: 'github-deploy@project.iam.gserviceaccount.com'
+      
+      - run: gcloud compute instances list
+```
+
+#### GitLab CI/CD Pipeline
+
+```yaml
+deploy:
+  image: google/cloud-sdk:alpine
+  id_tokens:
+    GITLAB_OIDC_TOKEN:
+      aud: https://gitlab.com
+  script:
+    - echo ${GITLAB_OIDC_TOKEN} > token.txt
+    - gcloud iam workload-identity-pools create-cred-config
+        projects/123456789/locations/global/workloadIdentityPools/gitlab-ci/providers/gitlab-oidc
+        --service-account=gitlab-deploy@project.iam.gserviceaccount.com
+        --output-file=credentials.json
+        --credential-source-file=token.txt
+    - export GOOGLE_APPLICATION_CREDENTIALS=credentials.json
+    - gcloud auth login --cred-file=credentials.json
+    - gcloud compute instances list
+```
+
+### Best Practices
+
+1. **Use Attribute Conditions**: Always restrict access using CEL expressions
+   ```hcl
+   attribute_condition = "assertion.repository_owner == 'YourOrg' && assertion.ref == 'refs/heads/main'"
+   ```
+
+2. **Separate Service Accounts**: Use different service accounts for different environments
+   ```hcl
+   service_account_bindings = {
+     "prod"    = { attribute_value = "refs/heads/main", ... }
+     "staging" = { attribute_value = "refs/heads/develop", ... }
+   }
+   ```
+
+3. **Minimal Permissions**: Grant only required IAM roles to service accounts
+
+4. **Audit Logging**: Enable audit logs for workload identity usage
+   ```bash
+   gcloud logging read "protoPayload.serviceName=sts.googleapis.com"
+   ```
+
+5. **Disable When Not Needed**: Temporarily disable pools or providers
+   ```hcl
+   disabled = true
+   ```
+
+### Supported Providers
+
+- **GitHub Actions**: OIDC-based authentication
+- **GitLab CI/CD**: OIDC-based authentication
+- **AWS**: Cross-account access
+- **Custom OIDC**: Any OIDC-compliant provider
+- **SAML**: SAML 2.0 identity providers
+
+### Attribute Mappings
+
+Common attribute mappings for different providers:
+
+#### GitHub Actions
+```hcl
+attribute_mapping = {
+  "google.subject"           = "assertion.sub"
+  "attribute.actor"          = "assertion.actor"
+  "attribute.repository"     = "assertion.repository"
+  "attribute.repository_owner" = "assertion.repository_owner"
+  "attribute.ref"            = "assertion.ref"
+}
+```
+
+#### GitLab CI/CD
+```hcl
+attribute_mapping = {
+  "google.subject"         = "assertion.sub"
+  "attribute.project_path" = "assertion.project_path"
+  "attribute.ref"          = "assertion.ref"
+}
+```
+
+### Security Considerations
+
+1. **Attribute Conditions**: Use CEL expressions to restrict access
+2. **Service Account Permissions**: Follow principle of least privilege
+3. **Branch Protection**: Use repository branch protection rules
+4. **Audit Logs**: Monitor STS token exchanges
+5. **Regular Review**: Audit bindings and remove unused ones
+
+### Troubleshooting
+
+**Problem**: Authentication fails in CI/CD
+- Verify workload identity provider name is correct
+- Check service account exists
+- Verify attribute condition matches token claims
+- Ensure required APIs are enabled (IAM, STS)
+
+**Problem**: Permission denied to impersonate service account
+- Check service account IAM bindings
+- Verify principal set matches attribute values
+- Review attribute mapping configuration
+
+**Problem**: Attribute condition evaluation failed
+- Inspect OIDC token claims
+- Verify CEL expression syntax
+- Check attribute names match mappings
+
+### Additional Documentation
+
+- [WIF_GENERIC.md](WIF_GENERIC.md) - Comprehensive guide with examples
+- [examples/github-actions.md](../modules/google-workload-identity-federation-generic/examples/github-actions.md) - GitHub Actions setup
+- [examples/gitlab-ci.md](../modules/google-workload-identity-federation-generic/examples/gitlab-ci.md) - GitLab CI/CD setup
+- [examples/workload-identity-federation.md](../examples/workload-identity-federation.md) - Configuration examples
+
+### Notes
+
+- Provider names are formatted as `{pool_id}-{provider_id}`
+- All resources are created at the global location
+- Service accounts must exist before applying this component
+- Supports multiple pools and providers in a single configuration
+- Each pool can have multiple providers
+- Each provider can have multiple service account bindings
+
+

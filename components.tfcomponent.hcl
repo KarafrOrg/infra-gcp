@@ -33,8 +33,9 @@ component "google-workload-identity-federation" {
   }
 
   inputs = {
-    gcp_project_name = var.gcp_project_name
-    k8s_clusters     = var.k8s_clusters
+    gcp_project_name        = var.gcp_project_name
+    k8s_clusters            = var.k8s_clusters
+    external_identity_pools = var.external_identity_pools
   }
 
   depends_on = [
@@ -57,3 +58,4 @@ component "kubernetes-service-account" {
     component.google-workload-identity-federation
   ]
 }
+
