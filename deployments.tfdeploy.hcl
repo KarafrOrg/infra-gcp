@@ -147,7 +147,7 @@ deployment "production" {
 
         service_account_bindings = {
           "infra-cluster" = {
-            service_account_email = "github-actions@project.iam.gserviceaccount.com"
+            service_account_email = "github-actions@karafra-net.iam.gserviceaccount.com"
             attribute_name        = "repository"
             attribute_value       = "KarafrOrg/infra-cluster"
           }
