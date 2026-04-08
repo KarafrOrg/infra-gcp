@@ -1,5 +1,5 @@
-gcp_audience              = "//iam.googleapis.com/projects/1019265211616/locations/global/workloadIdentityPools/terraform-cloud/providers/terraform-cloud"
-gcp_service_account_email = "terraform@karafra-net.iam.gserviceaccount.com"
+gcp_audience              = "//iam.googleapis.com/projects/1019265211616/locations/global/workloadIdentityPools/github-actions-karafrorg/providers/oidc"
+gcp_service_account_email = "github-actions-infra-gcp@karafra-net.iam.gserviceaccount.com"
 gcp_project_name          = "karafra-net"
 gcp_region                = "europe-central2"
 gcp_zone                  = "europe-central2-a"
