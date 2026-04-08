@@ -80,143 +80,119 @@ runs:
         INIT_OUTCOME: ${{ steps.init.outcome }}
         PLAN_LOG_PATH: plan.log
         ENVIRONMENT: ${{ inputs.environment }}
-        # language=javascript
       with:
+        # language=javascript
         script: |
           const fs = require('fs');
-          const planOutcome = process.env.PLAN_OUTCOME;
-          const checkOutcome = process.env.CHECK_OUTCOME;
-          const initOutcome = process.env.INIT_OUTCOME;
-          const planLogPath = process.env.PLAN_LOG_PATH;
-          const environment = process.env.ENVIRONMENT;
+          const { PLAN_OUTCOME, CHECK_OUTCOME, INIT_OUTCOME, PLAN_LOG_PATH, ENVIRONMENT } = process.env;
 
-          // Read plan output from file
-          let planOutput = '';
-          try {
-              let rawOutput = fs.readFileSync(planLogPath, 'utf8');
+          function stripAnsiCodes(text) {
+              return text
+                  .replace(/\x1b\[[0-9;]*[a-zA-Z]/g, '')
+                  .replace(/[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]/g, '');
+          }
+
+          function findMinIndent(lines) {
+              let minIndent = Infinity;
+              for (const line of lines) {
+                  if (line.trim().length === 0) continue;
+                  const leadingSpaces = line.match(/^(\s*)/)[1].length;
+                  minIndent = Math.min(minIndent, leadingSpaces);
+              }
+              return minIndent === Infinity ? 0 : minIndent;
+          }
+
+          function normalizeIndentation(lines) {
+              const minIndent = findMinIndent(lines);
+              if (minIndent === 0) return lines.join('\n').trim();
               
-              // Strip ANSI color codes and control characters
-              rawOutput = rawOutput.replace(/\x1b\[[0-9;]*[a-zA-Z]/g, '');
-              rawOutput = rawOutput.replace(/[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]/g, '');
-              
-              const lines = rawOutput.split('\n');
-              
-              // Check if "Terraform will perform the following actions:" is present
+              return lines
+                  .map(line => line.length > minIndent ? line.substring(minIndent) : line)
+                  .join('\n')
+                  .trim();
+          }
+
+          function extractPlanSection(lines, startIndex, endIndex) {
+              const extractedLines = lines.slice(startIndex, endIndex);
+              return normalizeIndentation(extractedLines);
+          }
+
+          function isNoiseLine(line) {
+              const noisePatterns = [
+                  'Refreshing state...', 'Reading...', 'Read complete',
+                  '[secrets]', '[init]', '[plan]',
+                  '$ cd ', '$ get_secret', 'Secrets written',
+                  'Initializing', 'Using terraform', 'Reusing previous',
+                  'Using previously-installed', 'Try running', 'All Terraform commands'
+              ];
+              return noisePatterns.some(pattern => line.includes(pattern));
+          }
+
+          function extractFallbackPlan(lines) {
+              const planLines = [];
+              let inPlanSection = false;
+
+              for (const line of lines) {
+                  if (line.includes('Plan:') || line.includes('Finished in')) break;
+                  if (isNoiseLine(line)) continue;
+
+                  if (!inPlanSection) {
+                      inPlanSection = line.includes('Resource actions are indicated') || line.match(/^\s*[#+~-]/);
+                  }
+
+                  if (inPlanSection) planLines.push(line);
+              }
+
+              return planLines.join('\n').trim();
+          }
+
+          function extractPlanOutput(rawOutput) {
+              const cleanOutput = stripAnsiCodes(rawOutput);
+              const lines = cleanOutput.split('\n');
+
+              if (lines.some(line => line.includes('No changes.'))) {
+                  return 'No changes. Your infrastructure matches the configuration.';
+              }
+
               const performActionsIndex = lines.findIndex(line => 
                   line.includes('Terraform will perform the following actions:')
               );
-              
-              if (performActionsIndex !== -1) {
-                  // Skip the "Terraform will perform..." line and one empty line after it
-                  let startIndex = performActionsIndex + 1;
-                  // Skip one more line if it's empty
-                  if (startIndex < lines.length && lines[startIndex].trim() === '') {
-                      startIndex++;
-                  }
-                  
-                  // Find the end (Plan: summary or end of output)
-                  let endIndex = lines.length;
-                  for (let i = startIndex; i < lines.length; i++) {
-                      if (lines[i].includes('Plan:') || lines[i].includes('Finished in')) {
-                          endIndex = i;
-                          break;
-                      }
-                  }
-                  
-                  // Normalize indentation - remove leading spaces to align all lines
-                  const extractedLines = lines.slice(startIndex, endIndex);
-                  const normalizedLines = extractedLines.map(line => {
-                      // Find the minimum leading spaces (excluding empty lines)
-                      return line;
-                  });
-                  
-                  // Find minimum indentation
-                  let minIndent = Infinity;
-                  for (const line of normalizedLines) {
-                      if (line.trim().length > 0) {
-                          const leadingSpaces = line.match(/^(\s*)/)[1].length;
-                          minIndent = Math.min(minIndent, leadingSpaces);
-                      }
-                  }
-                  
-                  // Remove the minimum indentation from all lines
-                  if (minIndent !== Infinity && minIndent > 0) {
-                      planOutput = normalizedLines.map(line => 
-                          line.length > minIndent ? line.substring(minIndent) : line
-                      ).join('\n').trim();
-                  } else {
-                      planOutput = normalizedLines.join('\n').trim();
-                  }
-              } else {
-                  // Fallback: look for "No changes" message
-                  const noChangesIndex = lines.findIndex(line => line.includes('No changes.'));
-                  if (noChangesIndex !== -1) {
-                      planOutput = 'No changes. Your infrastructure matches the configuration.';
-                  } else {
-                      // Filter out noise as before
-                      let planLines = [];
-                      let inPlanSection = false;
-                      
-                      for (let i = 0; i < lines.length; i++) {
-                          const line = lines[i];
-                          
-                          // Start capturing at resource changes
-                          if (line.includes('Resource actions are indicated') ||
-                              line.match(/^\s*[#+~-]/)) {
-                              inPlanSection = true;
-                          }
-                          
-                          // Stop at summary line
-                          if (line.includes('Plan:') || line.includes('Finished in')) {
-                              break;
-                          }
-                          
-                          // Skip noise lines
-                          if (line.includes('Refreshing state...') ||
-                              line.includes('Reading...') ||
-                              line.includes('Read complete') ||
-                              line.includes('[secrets]') ||
-                              line.includes('[init]') ||
-                              line.includes('[plan]') ||
-                              line.includes('$ cd ') ||
-                              line.includes('$ get_secret') ||
-                              line.includes('Secrets written') ||
-                              line.includes('Initializing') ||
-                              line.includes('Using terraform') ||
-                              line.includes('Reusing previous') ||
-                              line.includes('Using previously-installed') ||
-                              line.includes('Try running') ||
-                              line.includes('All Terraform commands')) {
-                              continue;
-                          }
-                          
-                          if (inPlanSection) {
-                              planLines.push(line);
-                          }
-                      }
-                      
-                      planOutput = planLines.join('\n').trim();
-                  }
+
+              if (performActionsIndex === -1) {
+                  return extractFallbackPlan(lines) || 'No changes detected.';
               }
-              
-              if (!planOutput) {
-                  planOutput = 'No changes detected.';
+
+              let startIndex = performActionsIndex + 1;
+              if (startIndex < lines.length && lines[startIndex].trim() === '') {
+                  startIndex++;
               }
+
+              const endIndex = lines.findIndex((line, i) => 
+                  i >= startIndex && (line.includes('Plan:') || line.includes('Finished in'))
+              );
+
+              const finalEndIndex = endIndex === -1 ? lines.length : endIndex;
+              return extractPlanSection(lines, startIndex, finalEndIndex) || 'No changes detected.';
+          }
+
+          let planOutput;
+          try {
+              const rawOutput = fs.readFileSync(PLAN_LOG_PATH, 'utf8');
+              planOutput = extractPlanOutput(rawOutput);
           } catch (error) {
-              planOutput = 'Error reading plan output: ' + error.message;
+              planOutput = `Error reading plan output: ${error.message}`;
           }
 
           const summary = [
-              `## Terraform Plan - ${environment}`,
+              `## Terraform Plan - ${ENVIRONMENT}`,
               '',
               '| Step | Status |',
               '| ---- | -------- |',
-              `| Terraform Initialization :wrench:️ | \`${initOutcome}\` |`,
-              `| Terraform Check :white_check_mark: | \`${checkOutcome}\` |`,
-              `| Terraform Plan :pencil: | \`${planOutcome}\` |`,
+              `| Terraform Initialization :wrench:️ | \`${INIT_OUTCOME}\` |`,
+              `| Terraform Check :white_check_mark: | \`${CHECK_OUTCOME}\` |`,
+              `| Terraform Plan :pencil: | \`${PLAN_OUTCOME}\` |`,
               '',
               '<details>',
-              '',
               '<summary>Show Plan Output</summary>',
               '',
               '```terraform',
