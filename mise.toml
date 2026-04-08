@@ -37,7 +37,6 @@ terraform init
 
 [tasks.plan]
 description = "Terraform plan"
-depends = ["init"]
 run = """
 cd "live/${ENVIRONMENT}"
 terraform plan
@@ -45,7 +44,6 @@ terraform plan
 
 [tasks.apply]
 description = "Terraform apply"
-depends = ["init"]
 run = """
 cd "live/${ENVIRONMENT}"
 terraform apply -auto-approve
@@ -53,7 +51,6 @@ terraform apply -auto-approve
 
 [tasks.validate]
 description = "Terraform validate"
-depends = ["init"]
 run = """
 cd "live/${ENVIRONMENT}"
 terraform validate
@@ -61,7 +58,6 @@ terraform validate
 
 [tasks.unlock-state]
 description = "Unlock Terraform state"
-depends = ["init"]
 run = """
 cd "live/${ENVIRONMENT}"
 terraform force-unlock -force-lock=true
@@ -69,7 +65,6 @@ terraform force-unlock -force-lock=true
 
 [tasks.destroy]
 description = "Terraform destroy"
-depends = ["init"]
 run = """
 cd "live/${ENVIRONMENT}"
 terraform destroy -auto-approve
