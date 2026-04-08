@@ -40,10 +40,10 @@ runs:
     - name: Terraform init
       # language=bash
       run: |
-        (mise init 2>&1) | sed 's/\x1b\[[0-9;]*m//g' | tee init.log
+        (mise init 2>&1) | tee init.log
         
         echo "stdout<<EOF" >> $GITHUB_OUTPUT
-        cat init.log >> $GITHUB_OUTPUT
+        sed 's/\x1b\[[0-9;]*m//g' init.log >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
       id: init
       shell: bash
@@ -55,10 +55,10 @@ runs:
     - name: Terraform Check
       # language=bash
       run: |
-        (mise validate 2>&1) | sed 's/\x1b\[[0-9;]*m//g' | tee check.log
+        (mise validate 2>&1) | tee check.log
         
         echo "stdout<<EOF" >> $GITHUB_OUTPUT
-        cat check.log >> $GITHUB_OUTPUT
+        sed 's/\x1b\[[0-9;]*m//g' check.log >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
       shell: bash
       id: check
@@ -69,10 +69,10 @@ runs:
     - name: Terraform Plan
       # language=bash
       run: |
-        (${{ inputs.plan_command }} 2>&1) | sed 's/\x1b\[[0-9;]*m//g' | tee plan.log
+        (${{ inputs.plan_command }} 2>&1) | tee plan.log
         
         echo "stdout<<EOF" >> $GITHUB_OUTPUT
-        cat plan.log >> $GITHUB_OUTPUT
+        sed 's/\x1b\[[0-9;]*m//g' plan.log >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
       shell: bash
       id: plan
