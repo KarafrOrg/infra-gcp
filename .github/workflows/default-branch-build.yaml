@@ -1,0 +1,22 @@
+name: Default branch (Build)
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+concurrency: unique-state-lock
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  apply-terraform-plan:
+    uses: ./.github/workflows/apply.yaml
+    name: Apply Terraform plan
+    with:
+      environment: production
+      gcp_sa_email: github-actions-infra-gcp@karafra-net.iam.gserviceaccount.com
+      gcp_wif_resource_id: projects/1019265211616/locations/global/workloadIdentityPools/github-actions-karafrorg/providers/oidc
+    secrets: inherit
