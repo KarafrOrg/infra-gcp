@@ -46,9 +46,6 @@ jobs:
           export_environment_variables: 'true'
           workload_identity_provider: ${{ inputs.gcp_wif_resource_id }}
           service_account: ${{ inputs.gcp_sa_email }}
-          id_token_audience: '//iam.googleapis.com/${{ inputs.gcp_wif_resource_id }}'
-          id_token_include_email: 'true'
-          token_format: 'id_token'
       - name: Retrieve TF Cloud credentials
         uses: ./.github/actions/terraform-cloud-login
         id: tf_cloud_login
