@@ -27,7 +27,7 @@ resource "google_iam_workload_identity_pool_provider" "k8s_oidc" {
     "attribute.service_account_uid" = "assertion['kubernetes.io/serviceaccount/uid']"
   }
 }
-
+# Generic Workload Identity Pools (GitHub, GitLab, AWS, etc.)
 resource "google_iam_workload_identity_pool" "external_pools" {
   for_each = var.external_identity_pools
 
@@ -82,12 +82,6 @@ resource "google_service_account_iam_member" "k8s_workload_identity_bindings" {
   role               = "roles/iam.workloadIdentityUser"
   member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.k8s_clusters[each.value["cluster_key"]].name}/attribute.namespace/${each.value["namespace"]}/attribute.service_account/${each.value["ksa_key"]}"
 
-  condition {
-    title       = "k8s_workload_identity_${each.key}"
-    description = "Workload Identity binding for K8s service account ${each.value["ksa_key"]} in namespace ${each.value["namespace"]}"
-    expression  = "assertion.sub == 'system:serviceaccount:${each.value["namespace"]}:${each.value["ksa_key"]}'"
-  }
-
   depends_on = [
     google_iam_workload_identity_pool.k8s_clusters,
     google_iam_workload_identity_pool_provider.k8s_oidc
@@ -100,12 +94,6 @@ resource "google_service_account_iam_member" "external_workload_identity_binding
   service_account_id = "projects/${var.gcp_project_name}/serviceAccounts/${each.value["service_account_email"]}"
   role               = each.value["role"]
   member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.external_pools[each.value["pool_key"]].name}/attribute.${each.value["attribute_name"]}/${each.value["attribute_value"]}"
-
-  condition {
-    title       = "external_wif_${each.key}"
-    description = "Workload Identity binding for ${each.value["pool_key"]} - ${each.value["attribute_name"]}:${each.value["attribute_value"]}"
-    expression  = "assertion['${each.value["attribute_name"]}'] == '${each.value["attribute_value"]}'"
-  }
 
   depends_on = [
     google_iam_workload_identity_pool.external_pools,

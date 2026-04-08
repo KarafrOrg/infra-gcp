@@ -13,4 +13,3 @@ variable "k8s_clusters" {
   }))
   default = {}
 }
-
