@@ -79,7 +79,6 @@ runs:
         CHECK_OUTCOME: ${{ steps.check.outcome }}
         INIT_OUTCOME: ${{ steps.init.outcome }}
         PLAN_LOG_PATH: plan.log
-        ENVIRONMENT: ${{ inputs.environment }}
       with:
         # language=javascript
         script: |
