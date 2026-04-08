@@ -9,21 +9,7 @@ identity_token "gcp" {
   ]
 }
 
-deployment_auto_approve "apply_from_default_branch_without_destroys" {
-  check {
-    condition = context.plan.changes.remove == 0 && context.operation == "apply"
-    reason    = "Auto-approved: safe apply on main branch (no destroys)."
-  }
-}
-
-deployment_group "default_branch_bound" {
-  auto_approve_checks = [
-    deployment_auto_approve.apply_from_default_branch_without_destroys
-  ]
-}
-
 deployment "production" {
-  deployment_group = deployment_group.default_branch_bound
   inputs = {
     gcp_identity_token        = identity_token.gcp.jwt
     gcp_audience              = "//iam.googleapis.com/projects/1019265211616/locations/global/workloadIdentityPools/terraform-cloud/providers/terraform-cloud"
