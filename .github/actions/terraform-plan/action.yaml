@@ -123,7 +123,30 @@ runs:
                       }
                   }
                   
-                  planOutput = lines.slice(startIndex, endIndex).join('\n').trim();
+                  // Normalize indentation - remove leading spaces to align all lines
+                  const extractedLines = lines.slice(startIndex, endIndex);
+                  const normalizedLines = extractedLines.map(line => {
+                      // Find the minimum leading spaces (excluding empty lines)
+                      return line;
+                  });
+                  
+                  // Find minimum indentation
+                  let minIndent = Infinity;
+                  for (const line of normalizedLines) {
+                      if (line.trim().length > 0) {
+                          const leadingSpaces = line.match(/^(\s*)/)[1].length;
+                          minIndent = Math.min(minIndent, leadingSpaces);
+                      }
+                  }
+                  
+                  // Remove the minimum indentation from all lines
+                  if (minIndent !== Infinity && minIndent > 0) {
+                      planOutput = normalizedLines.map(line => 
+                          line.length > minIndent ? line.substring(minIndent) : line
+                      ).join('\n').trim();
+                  } else {
+                      planOutput = normalizedLines.join('\n').trim();
+                  }
               } else {
                   // Fallback: look for "No changes" message
                   const noChangesIndex = lines.findIndex(line => line.includes('No changes.'));
