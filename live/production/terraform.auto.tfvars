@@ -13,7 +13,7 @@ gcp_service_service_accounts = {
   }
   "github-actions-infra-gcp" = {
     display_name = "GitHub Actions Service Account"
-    description  = "Service account for GitHub Actions workflows"
+    description  = "Service account for orchestrating GCP infrastructure changes from GitHub Actions workflows"
     roles = [
       "roles/owner"
     ]
