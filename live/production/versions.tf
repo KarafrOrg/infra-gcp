@@ -27,9 +27,5 @@ provider "kubernetes" {
   client_key             = base64decode(var.kube_client_key_data)
 }
 
-provider "google" {
-  project = var.gcp_project_name
-  region  = var.gcp_region
-  zone    = var.gcp_zone
-}
+provider "google" {}
 
