@@ -20,5 +20,7 @@ jobs:
     uses: ./.github/workflows/plan.yaml
     name: Create Terraform plan
     with:
-      environment: 'production'
+      environment: production
+      gcp_sa_email: terraform@karafra-net.iam.gserviceaccount.com
+      gcp_wif_resource_id: //iam.googleapis.com/projects/1019265211616/locations/global/workloadIdentityPools/github-actions-karafrorg/providers/oidc
     secrets: inherit
