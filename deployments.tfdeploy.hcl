@@ -136,10 +136,14 @@ deployment "production" {
             }
 
             attribute_mapping = {
-              "google.subject"             = "assertion.sub"
-              "attribute.repository"       = "assertion.repository"
-              "attribute.repository_owner" = "assertion.repository_owner"
-              "attribute.ref"              = "assertion.ref"
+              "google.subject"               = "assertion.sub"
+              "attribute.repository"         = "assertion.repository"
+              "attribute.repository_owner"   = "assertion.repository_owner"
+              "attribute.ref"                = "assertion.ref"
+              "attribute.workflow"           = "assertion.workflow"
+              "attribute.actor"              = "assertion.actor"
+              "attrbute.workflow_ref"        = "assertion.workflow_ref"
+              "attribute.runner_environment" = "assertion.runner_environment"
             }
 
             attribute_condition = "assertion.repository_owner == 'KarafrOrg'"
