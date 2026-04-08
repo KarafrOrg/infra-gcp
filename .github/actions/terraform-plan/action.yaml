@@ -183,7 +183,7 @@ runs:
           }
 
           const summary = [
-              `## Terraform Plan - ${ENVIRONMENT}`,
+              `## Terraform plan - ${ENVIRONMENT}`,
               '',
               '| Step | Status |',
               '| ---- | -------- |',
