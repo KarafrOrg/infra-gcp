@@ -49,8 +49,6 @@ jobs:
       - name: Retrieve TF Cloud credentials
         uses: ./.github/actions/terraform-cloud-login
         id: tf_cloud_login
-        with:
-          gcp_access_token: ${{ steps.gcp_auth.outputs.access_token }}
       - name: Run Terraform plan
         uses: ./.github/actions/terraform-plan
         id: plan
