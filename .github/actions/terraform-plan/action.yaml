@@ -113,11 +113,66 @@ runs:
           // Read plan output from file
           let planOutput = '';
           try {
-              planOutput = fs.readFileSync(planLogPath, 'utf8');
-              planOutput = planOutput
-                  .split('\n')
-                  .filter(line => !line.includes('Refreshing state...'))
-                  .join('\n');
+              let rawOutput = fs.readFileSync(planLogPath, 'utf8');
+              
+              // Strip ANSI color codes and control characters
+              rawOutput = rawOutput.replace(/\x1b\[[0-9;]*[a-zA-Z]/g, '');
+              rawOutput = rawOutput.replace(/[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]/g, '');
+              
+              // Find the start of the actual plan (after "Terraform will perform...")
+              const lines = rawOutput.split('\n');
+              let inPlanSection = false;
+              let planLines = [];
+              
+              for (let i = 0; i < lines.length; i++) {
+                  const line = lines[i];
+                  
+                  // Start capturing at "Terraform will perform" or resource changes
+                  if (line.includes('Terraform will perform') || 
+                      line.includes('Resource actions are indicated') ||
+                      line.match(/^\s*[#+~-]/)) {
+                      inPlanSection = true;
+                  }
+                  
+                  // Stop at summary line or "No changes"
+                  if (line.includes('Plan:') || 
+                      line.includes('No changes.') ||
+                      line.includes('Finished in')) {
+                      if (line.includes('No changes.')) {
+                          planLines.push(line);
+                      }
+                      break;
+                  }
+                  
+                  // Skip noise lines
+                  if (line.includes('Refreshing state...') ||
+                      line.includes('Reading...') ||
+                      line.includes('Read complete') ||
+                      line.includes('[secrets]') ||
+                      line.includes('[init]') ||
+                      line.includes('[plan]') ||
+                      line.includes('$ cd ') ||
+                      line.includes('$ get_secret') ||
+                      line.includes('Secrets written') ||
+                      line.includes('Initializing') ||
+                      line.includes('Using terraform') ||
+                      line.includes('Reusing previous') ||
+                      line.includes('Using previously-installed') ||
+                      line.includes('Try running') ||
+                      line.includes('All Terraform commands')) {
+                      continue;
+                  }
+                  
+                  if (inPlanSection) {
+                      planLines.push(line);
+                  }
+              }
+              
+              planOutput = planLines.join('\n').trim();
+              
+              if (!planOutput) {
+                  planOutput = 'No changes detected.';
+              }
           } catch (error) {
               planOutput = 'Error reading plan output: ' + error.message;
           }
