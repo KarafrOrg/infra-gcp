@@ -31,3 +31,5 @@ runs:
         
         echo "TERRAFORM_CLOUD_API_TOKEN=${TERRAFORM_CLOUD_API_TOKEN}" >> $GITHUB_ENV
       shell: bash
+      env:
+        CLOUDSDK_AUTH_ACCESS_TOKEN: ${{ inputs.gcp_access_token }}

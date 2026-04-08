@@ -43,6 +43,7 @@ jobs:
         uses: google-github-actions/auth@v3
         id: gcp_auth
         with:
+          export_environment_variables: 'true'
           workload_identity_provider: ${{ inputs.gcp_wif_resource_id }}
           service_account: ${{ inputs.gcp_sa_email }}
       - name: Retrieve TF Cloud credentials
