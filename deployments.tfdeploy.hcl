@@ -10,6 +10,7 @@ identity_token "gcp" {
 }
 
 deployment "production" {
+  destroy=true
   inputs = {
     gcp_identity_token        = identity_token.gcp.jwt
     gcp_audience              = "//iam.googleapis.com/projects/1019265211616/locations/global/workloadIdentityPools/terraform-cloud/providers/terraform-cloud"
