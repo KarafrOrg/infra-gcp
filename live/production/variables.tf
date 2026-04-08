@@ -1,0 +1,1 @@
+../../modules/infra-gcp/variables.tf

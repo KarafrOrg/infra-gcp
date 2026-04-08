@@ -30,7 +30,7 @@ locals {
 
   external_bindings_map = {
     for item in local.external_bindings :
-    "${item["pool_key"]}-${item["pool_key"]}" => item
+    "${item["pool_key"]}-${item["binding_key"]}" => item
   }
 
   external_providers = flatten([

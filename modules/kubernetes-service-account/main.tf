@@ -1,4 +1,4 @@
-resource "kubernetes_service_account" "k8s_service_accounts" {
+resource "kubernetes_service_account_v1" "k8s_service_accounts" {
   for_each = { for k, v in local.k8s_service_accounts_map : k => v if v["create_k8s_sa"] }
 
   metadata {

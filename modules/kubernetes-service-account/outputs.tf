@@ -1,7 +1,7 @@
 output "kubernetes_service_accounts" {
   description = "Map of created Kubernetes service accounts"
   value = {
-    for k, v in kubernetes_service_account.k8s_service_accounts :
+    for k, v in kubernetes_service_account_v1.k8s_service_accounts :
     k => {
       name        = v.metadata[0].name
       namespace   = v.metadata[0].namespace

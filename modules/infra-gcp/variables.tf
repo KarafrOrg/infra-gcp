@@ -58,18 +58,18 @@ variable "kube_client_ca_cert" {
 
 variable "kube_host" {
   description = "Kubernetes API server host URL for Kubernetes provider"
-  type        = string
-  ephemeral   = true
+  type = string
+  ephemeral = true
 }
 # endregion
 
 # region Service accounts
-variable gcp_service_service_accounts {
+variable "gcp_service_service_accounts" {
   description = "Map of service account configurations"
   type = map(object({
     display_name = optional(string)
-    description = optional(string)
-    roles = optional(list(string))
+    description  = optional(string)
+    roles        = optional(list(string))
   }))
   default = {}
 }
@@ -80,7 +80,7 @@ variable "k8s_ca_certificate_refs" {
   description = "Map of k8s clusters for Pub/Sub topic creation (CA certificates must be managed externally)"
   type = map(object({
     enable_pub_sub = optional(bool, true)
-    labels = optional(map(string), {})
+    labels         = optional(map(string), {})
   }))
   default = {}
 }
@@ -102,20 +102,22 @@ variable "secret_replication_automatic" {
 variable "k8s_clusters" {
   description = "Map of k8s cluster configurations for workload identity federation"
   type = map(object({
-    issuer_uri = string
-    display_name = optional(string)
-    description = optional(string)
+    issuer_uri        = string
+    display_name      = optional(string)
+    description       = optional(string)
     default_namespace = optional(string, "default")
     allowed_audiences = optional(list(string), ["sts.googleapis.com"])
     kubernetes_service_accounts = map(object({
-      namespace = optional(string)
-      gcp_service_account_email = string
-      create_k8s_sa = optional(bool, true)
-      k8s_sa_annotations = optional(map(string), {})
-      k8s_sa_labels = optional(map(string), {})
+      namespace                       = optional(string)
+      gcp_service_account_email       = string
+      create_k8s_sa                   = optional(bool, true)
+      k8s_sa_annotations              = optional(map(string), {})
+      k8s_sa_labels                   = optional(map(string), {})
       automount_service_account_token = optional(bool, true)
     }))
-    jwks_json_data = optional(string)
+    jwks_json_data = object({
+      secret_name = string
+    })
   }))
   default = {}
 }
@@ -165,4 +167,3 @@ variable "external_identity_pools" {
   default = {}
 }
 # endregion
-

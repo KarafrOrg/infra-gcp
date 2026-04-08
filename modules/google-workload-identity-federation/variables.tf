@@ -15,7 +15,9 @@ variable "k8s_clusters" {
       namespace                 = optional(string)
       gcp_service_account_email = string
     }))
-    jwks_json_data = optional(string)
+    jwks_json_data = object({
+      secret_name = string
+    })
   }))
   default = {}
 }

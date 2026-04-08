@@ -1,0 +1,22 @@
+name: Pull request (Build)
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+concurrency: unique-state-lock
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  create-terraform-plan:
+    uses: ./.github/workflows/plan.yaml
+    name: Create Terraform plan
+    with:
+      environment: 'production'
+    secrets: inherit

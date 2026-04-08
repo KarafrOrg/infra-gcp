@@ -1,5 +1,5 @@
 # Local .terraform directories
-**/.terraform/*
+.terraform
 
 # .tfstate files
 *.tfstate
@@ -52,3 +52,7 @@ secrets/
 
 # Logs
 *.log
+
+# GCP service account keys
+cred.json
+secrets.auto.tfvars

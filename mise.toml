@@ -1,0 +1,87 @@
+[tools]
+kubectl = "1.35"
+gcloud = "564.0"
+terraform = "1.14"
+
+[env]
+PROJECT_NUMBER = "1019265211616"
+
+[tasks.secrets]
+description = "Fetch secrets from GCP Secret Manager into Terraform auto vars"
+run = """
+set -euo pipefail
+
+get_secret() {
+  gcloud secrets versions access latest --secret="$1"
+}
+
+cat > live/${ENVIRONMENT}/secrets.auto.tfvars <<EOF
+kube_host             = "$(get_secret k8s-production-host)"
+kube_client_ca_cert   = "$(get_secret k8s-production-client-ca-cert)"
+kube_client_cert_data = "$(get_secret k8s-production-client-cert)"
+kube_client_key_data  = "$(get_secret k8s-production-client-key)"
+gcp_identity_token    = "$OIDC_TOKEN"
+EOF
+
+echo "Secrets written to live/${ENVIRONMENT}/secrets.auto.tfvars"
+"""
+
+[tasks.init]
+description = "Initialize Terraform"
+depends = ["secrets"]
+run = """
+set -euo pipefail
+
+echo "Initializing Terraform in live/${ENVIRONMENT}"
+echo "Using terraform version $(terraform version)"
+
+cd "live/${ENVIRONMENT}"
+terraform init
+"""
+
+[tasks.plan]
+description = "Terraform plan"
+depends = ["init"]
+run = """
+set -euo pipefail
+
+cd "live/${ENVIRONMENT}"
+terraform plan
+"""
+
+[tasks.apply]
+description = "Terraform apply"
+depends = ["init"]
+run = """
+set -euo pipefail
+
+cd "live/${ENVIRONMENT}"
+terraform apply -auto-approve
+"""
+
+[tasks.validate]
+description = "Terraform validate"
+depends = ["init"]
+run = """
+set -euo pipefail
+cd "live/${ENVIRONMENT}"
+terraform validate
+"""
+
+[tasks.unlock-state]
+description = "Unlock Terraform state"
+depends = ["init"]
+run = """
+set -euo pipefail
+cd "live/${ENVIRONMENT}"
+terraform force-unlock -force-lock=true
+"""
+
+[tasks.destroy]
+description = "Terraform destroy"
+depends = ["init"]
+run = """
+set -euo pipefail
+cd "live/${ENVIRONMENT}"
+terraform destroy -auto-approve
+"""

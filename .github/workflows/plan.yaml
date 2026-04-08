@@ -1,0 +1,53 @@
+name: Plan Terraform changes
+on:
+  workflow_call:
+    inputs:
+      concurrency_group:
+        required: false
+        type: string
+        default: 'create-plan-${{ github.ref }}'
+      run_name:
+        required: false
+        type: string
+        default: 'Plan Terraform changes - ${{ github.ref }}'
+      environment:
+        required: true
+        type: string
+
+concurrency:
+  group: ${{ inputs.concurrency_group }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  plan:
+    env:
+      ENVIRONMENT: ${{ inputs.environment }}
+    name: Plan Terraform changes
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Bootstrap repository
+        uses: ./.github/actions/bootstrap-repository
+      - name: Login to GCP
+        uses: google-github-actions/auth@v3
+        id: gcp_auth
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_RESOURCE_ID }}
+          service_account: terraform@karafra-net.iam.gserviceaccount.com
+      - name: Retrieve TF Cloud credentials
+        uses: ./.github/actions/terraform-cloud-login
+        id: tf_cloud_login
+        with:
+          gcp_access_token: ${{ steps.gcp_auth.outputs.access_token }}
+      - name: Run Terraform plan
+        uses: ./.github/actions/terraform-plan
+        id: plan
+        env:
+          TF_API_TOKEN: ${{ steps.tf_cloud_login.outputs.terraform_cloud_api_token }}
+        with:
+          environment: ${{ inputs.environment }}

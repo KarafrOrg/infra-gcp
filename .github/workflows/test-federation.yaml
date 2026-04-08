@@ -16,5 +16,4 @@ jobs:
         with:
           workload_identity_provider: '${{ vars.GCP_WIF_RESOURCE_ID }}'
           service_account: github-actions-infra-cluster@karafra-net.iam.gserviceaccount.com
-          access_token_lifetime: '60s'
-      - run: gcloud secrets list
+      - uses: google-github-actions/setup-gcloud@v3
