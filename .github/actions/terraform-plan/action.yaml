@@ -1,20 +1,10 @@
 name: Plan Terraform changes
 description: GitHub Action to plan Terraform changes
 inputs:
-  environment:
-    description: 'Environment to deploy to (e.g., production, staging)'
-    required: true
-    default: production
-  oidc_token:
-    description: 'OIDC token for authentication to GCP'
-    required: true
   plan_command:
     description: 'Command to run Terraform plan'
     required: false
     default: mise plan
-  tf_api_token:
-    description: 'Terraform Cloud API token (optional if using OIDC for authentication)'
-    required: true
 outputs:
   plan_outcome:
     description: 'The stdout from the Terraform plan command'
@@ -47,10 +37,6 @@ runs:
         echo "EOF" >> $GITHUB_OUTPUT
       id: init
       shell: bash
-      env:
-        TF_API_TOKEN: ${{ env.TF_API_TOKEN }}
-        OIDC_TOKEN: ${{ inputs.oidc_token }}
-        ENVIRONMENT: ${{ inputs.environment }}
 
     - name: Terraform Check
       # language=bash
@@ -62,9 +48,6 @@ runs:
         echo "EOF" >> $GITHUB_OUTPUT
       shell: bash
       id: check
-      env:
-        OIDC_TOKEN: ${{ inputs.oidc_token }}
-        ENVIRONMENT: ${{ inputs.environment }}
 
     - name: Terraform Plan
       # language=bash
@@ -76,9 +59,6 @@ runs:
         echo "EOF" >> $GITHUB_OUTPUT
       shell: bash
       id: plan
-      env:
-        OIDC_TOKEN: ${{ inputs.oidc_token }}
-        ENVIRONMENT: ${{ inputs.environment }}
 
     - name: Upload Terraform logs as artifacts
       uses: actions/upload-artifact@v7
@@ -128,14 +108,14 @@ runs:
                   const line = lines[i];
                   
                   // Start capturing at "Terraform will perform" or resource changes
-                  if (line.includes('Terraform will perform') || 
+                  if (line.includes('Terraform will perform') ||
                       line.includes('Resource actions are indicated') ||
                       line.match(/^\s*[#+~-]/)) {
                       inPlanSection = true;
                   }
                   
                   // Stop at summary line or "No changes"
-                  if (line.includes('Plan:') || 
+                  if (line.includes('Plan:') ||
                       line.includes('No changes.') ||
                       line.includes('Finished in')) {
                       if (line.includes('No changes.')) {
