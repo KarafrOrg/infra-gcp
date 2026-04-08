@@ -5,22 +5,9 @@ inputs:
     description: 'Environment to deploy to (e.g., production, staging)'
     required: true
     default: production
-  service_account:
-    description: 'Service account to impersonate for OIDC token generation'
-    required: false
-    default: terraform@karafra-net.iam.gserviceaccount.com
-  workload_identity_pool_project_number:
-    description: 'GCP project number for workload identity pool'
-    required: false
-    default: '1019265211616'
-  workload_identity_pool_id:
-    description: 'Workload identity pool ID'
-    required: false
-    default: terraform-cloud
-  workload_identity_provider_id:
-    description: 'Workload identity provider ID'
-    required: false
-    default: terraform-cloud
+  oidc_token:
+    description: 'OIDC token for authentication to GCP'
+    required: true
   plan_command:
     description: 'Command to run Terraform plan'
     required: false
@@ -47,29 +34,11 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Generate OIDC Token
+    - name: Terraform init
       # language=bash
       run: |
         set -euo pipefail
-        echo "Generating OIDC token for service account impersonation..."
         
-        OIDC_TOKEN=$(gcloud auth print-identity-token \
-          --impersonate-service-account="${{ inputs.service_account }}" \
-          --audiences="//iam.googleapis.com/projects/${{ inputs.workload_identity_pool_project_number }}/locations/global/workloadIdentityPools/${{ inputs.workload_identity_pool_id }}/providers/${{ inputs.workload_identity_provider_id }}")
-        
-        echo "OIDC_TOKEN=${OIDC_TOKEN}" >> $GITHUB_ENV
-        echo "✓ OIDC token generated successfully"
-      shell: bash
-      id: oidc
-
-    - name: Tofu Init
-      # language=bash
-      run: |
-        set -euo pipefail
-        export OIDC_TOKEN="${{ env.OIDC_TOKEN }}"
-        export ENVIRONMENT="${{ inputs.environment }}"
-        
-        echo "Running: OIDC_TOKEN=*** ENVIRONMENT=${ENVIRONMENT} mise init"
         (mise init 2>&1) | tee init.log
         
         echo "stdout<<EOF" >> $GITHUB_OUTPUT
@@ -78,7 +47,8 @@ runs:
       id: init
       shell: bash
       env:
-        OIDC_TOKEN: ${{ env.OIDC_TOKEN }}
+        OIDC_TOKEN: ${{ inputs.oidc_token }}
+        ENVIRONMENT: ${{ inputs.environment }}
 
     - name: Tofu Check
       # language=bash
@@ -87,7 +57,6 @@ runs:
         export OIDC_TOKEN="${{ env.OIDC_TOKEN }}"
         export ENVIRONMENT="${{ inputs.environment }}"
         
-        echo "Running: OIDC_TOKEN=*** ENVIRONMENT=${ENVIRONMENT} mise validate"
         (mise validate 2>&1) | tee check.log
         
         echo "stdout<<EOF" >> $GITHUB_OUTPUT
@@ -96,16 +65,14 @@ runs:
       shell: bash
       id: check
       env:
-        OIDC_TOKEN: ${{ env.OIDC_TOKEN }}
+        OIDC_TOKEN: ${{ inputs.oidc_token }}
+        ENVIRONMENT: ${{ inputs.environment }}
 
     - name: Tofu Plan
       # language=bash
       run: |
         set -euo pipefail
-        export OIDC_TOKEN="${{ env.OIDC_TOKEN }}"
-        export ENVIRONMENT="${{ inputs.environment }}"
-        
-        echo "Running: OIDC_TOKEN=*** ENVIRONMENT=${ENVIRONMENT} ${{ inputs.plan_command }}"
+
         (${{ inputs.plan_command }} 2>&1) | tee plan.log
         
         echo "stdout<<EOF" >> $GITHUB_OUTPUT
@@ -114,7 +81,8 @@ runs:
       shell: bash
       id: plan
       env:
-        OIDC_TOKEN: ${{ env.OIDC_TOKEN }}
+        OIDC_TOKEN: ${{ inputs.oidc_token }}
+        ENVIRONMENT: ${{ inputs.environment }}
 
     - name: Upload Tofu logs as artifacts
       uses: actions/upload-artifact@v7
