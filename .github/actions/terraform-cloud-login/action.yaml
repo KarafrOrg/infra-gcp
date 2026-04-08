@@ -26,15 +26,11 @@ runs:
         set -euo pipefail
         echo "Reading Terraform Cloud API token from GCP Secret Manager..."
         
-        # Clear any existing impersonation and authentication configuration to avoid conflicts
-        unset CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE
-        unset GOOGLE_APPLICATION_CREDENTIALS
-        gcloud config unset auth/impersonate_service_account 2>/dev/null || true
-        gcloud config unset core/account 2>/dev/null || true
-        
-        # Verify we're using the provided access token
+        # Verify current gcloud auth configuration
         echo "Current gcloud auth configuration:"
         gcloud config list 2>&1 || true
+        echo "Active account:"
+        gcloud auth list --filter=status:ACTIVE --format="value(account)" 2>&1 || true
         
         # Read the secret value and store it in an environment variable
         if ! TERRAFORM_CLOUD_API_TOKEN=$(gcloud secrets versions access latest --secret="${{ inputs.terraform_access_token_secret_name }}" 2>&1); then
