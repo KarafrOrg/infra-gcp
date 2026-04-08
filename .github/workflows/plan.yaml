@@ -54,7 +54,7 @@ jobs:
         id: plan
         with:
           environment: ${{ inputs.environment }}
-          oidc_token: ${{ steps.gcp_auth.outputs.id_token }}
+          oidc_token: ${{ steps.gcp_auth.outputs.access_token }}
           tf_api_token: ${{ steps.tf_cloud_login.outputs.terraform_cloud_api_token }}
         env:
           TF_TOKEN_app_terraform_io: ${{ steps.tf_cloud_login.outputs.terraform_cloud_api_token }}
