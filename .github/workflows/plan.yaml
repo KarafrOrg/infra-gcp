@@ -46,6 +46,7 @@ jobs:
           export_environment_variables: 'true'
           workload_identity_provider: ${{ inputs.gcp_wif_resource_id }}
           service_account: ${{ inputs.gcp_sa_email }}
+          token_format: 'id_token'
       - name: Retrieve TF Cloud credentials
         uses: ./.github/actions/terraform-cloud-login
         id: tf_cloud_login
@@ -54,7 +55,7 @@ jobs:
         id: plan
         with:
           environment: ${{ inputs.environment }}
-          oidc_token: ${{ steps.gcp_auth.outputs.access_token }}
+          oidc_token: ${{ steps.gcp_auth.outputs.id_token }}
           tf_api_token: ${{ steps.tf_cloud_login.outputs.terraform_cloud_api_token }}
         env:
           TF_TOKEN_app_terraform_io: ${{ steps.tf_cloud_login.outputs.terraform_cloud_api_token }}
