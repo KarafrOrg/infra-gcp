@@ -26,10 +26,57 @@ runs:
         set -euo pipefail
         echo "Reading Terraform Cloud API token from GCP Secret Manager..."
         
+        # Clear any existing impersonation and authentication configuration to avoid conflicts
+        unset CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE
+        unset GOOGLE_APPLICATION_CREDENTIALS
+        gcloud config unset auth/impersonate_service_account 2>/dev/null || true
+        gcloud config unset core/account 2>/dev/null || true
+        
+        # Verify we're using the provided access token
+        echo "Current gcloud auth configuration:"
+        gcloud config list 2>&1 || true
+        
         # Read the secret value and store it in an environment variable
-        TERRAFORM_CLOUD_API_TOKEN=$(gcloud secrets versions access latest --secret="${{ inputs.terraform_access_token_secret_name }}")
+        if ! TERRAFORM_CLOUD_API_TOKEN=$(gcloud secrets versions access latest --secret="${{ inputs.terraform_access_token_secret_name }}" 2>&1); then
+          echo "ERROR: Failed to read secret from GCP Secret Manager"
+          echo "Error details:"
+          echo "${TERRAFORM_CLOUD_API_TOKEN}"
+          
+          # Parse and display error more clearly
+          if echo "${TERRAFORM_CLOUD_API_TOKEN}" | grep -q "PERMISSION_DENIED\|iam.serviceAccounts.getAccessToken"; then
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "Permission Denied: Unable to impersonate service account"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "Root cause: gcloud is attempting to use service account impersonation"
+            echo "           when it should be using the provided access token directly."
+            echo ""
+            echo "Troubleshooting steps:"
+            echo "  1. Verify the GitHub Actions workload identity is properly configured"
+            echo "  2. Ensure the GCP access token passed to this action is valid"
+            echo "  3. Verify the service account has 'roles/secretmanager.secretAccessor'"
+            echo "  4. Check that the workload identity pool and provider exist and are enabled"
+            echo ""
+            echo "Current gcloud configuration has been cleared. The issue is likely with"
+            echo "the access token generation in the workflow that called this action."
+            echo ""
+          elif echo "${TERRAFORM_CLOUD_API_TOKEN}" | grep -q "NOT_FOUND"; then
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "Secret Not Found"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "The secret '${{ inputs.terraform_access_token_secret_name }}' does not exist"
+            echo "in GCP Secret Manager, or you don't have permission to view it."
+            echo ""
+          fi
+          
+          exit 1
+        fi
         
         echo "TERRAFORM_CLOUD_API_TOKEN=${TERRAFORM_CLOUD_API_TOKEN}" >> $GITHUB_ENV
+        echo "✓ Successfully retrieved Terraform Cloud API token"
       shell: bash
       env:
         CLOUDSDK_AUTH_ACCESS_TOKEN: ${{ inputs.gcp_access_token }}
