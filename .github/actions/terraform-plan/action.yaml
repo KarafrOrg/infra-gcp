@@ -1,5 +1,5 @@
-name: Plan Tofu
-description: GitHub Action to plan Tofu changes
+name: Plan Terraform changes
+description: GitHub Action to plan Terraform changes
 inputs:
   environment:
     description: 'Environment to deploy to (e.g., production, staging)'
@@ -14,22 +14,22 @@ inputs:
     default: mise plan
 outputs:
   plan_outcome:
-    description: 'The stdout from the Tofu plan command'
+    description: 'The stdout from the Terraform plan command'
     value: ${{ steps.plan.outcome }}
   init_outcome:
-    description: 'The outcome of the Tofu init step'
+    description: 'The outcome of the Terraform init step'
     value: ${{ steps.init.outcome }}
   check_outcome:
-    description: 'The outcome of the Tofu validate step'
+    description: 'The outcome of the Terraform validate step'
     value: ${{ steps.check.outcome }}
   plan_output:
-    description: 'The stdout from the Tofu plan command'
+    description: 'The stdout from the Terraform plan command'
     value: ${{ steps.plan.outputs.stdout }}
   init_output:
-    description: 'The stdout from the Tofu init command'
+    description: 'The stdout from the Terraform init command'
     value: ${{ steps.init.outputs.stdout }}
   check_output:
-    description: 'The stdout from the Tofu validate command'
+    description: 'The stdout from the Terraform validate command'
     value: ${{ steps.check.outputs.stdout }}
 runs:
   using: composite
@@ -50,7 +50,7 @@ runs:
         OIDC_TOKEN: ${{ inputs.oidc_token }}
         ENVIRONMENT: ${{ inputs.environment }}
 
-    - name: Tofu Check
+    - name: Terraform Check
       # language=bash
       run: |
         set -euo pipefail
@@ -68,7 +68,7 @@ runs:
         OIDC_TOKEN: ${{ inputs.oidc_token }}
         ENVIRONMENT: ${{ inputs.environment }}
 
-    - name: Tofu Plan
+    - name: Terraform Plan
       # language=bash
       run: |
         set -euo pipefail
@@ -84,11 +84,11 @@ runs:
         OIDC_TOKEN: ${{ inputs.oidc_token }}
         ENVIRONMENT: ${{ inputs.environment }}
 
-    - name: Upload Tofu logs as artifacts
+    - name: Upload Terraform logs as artifacts
       uses: actions/upload-artifact@v7
       if: always()
       with:
-        name: tofu-logs-${{ inputs.environment }}-${{ github.sha }}
+        name: Terraform-logs-${{ inputs.environment }}-${{ github.sha }}
         path: |
           init.log
           check.log
@@ -127,13 +127,13 @@ runs:
           }
 
           const summary = [
-              `## Tofu Plan - ${environment}`,
+              `## Terraform Plan - ${environment}`,
               '',
               '| Step | Status |',
               '| ---- | -------- |',
-              `| Tofu Initialization :wrench:️ | \`${initOutcome}\` |`,
-              `| Tofu Check :white_check_mark: | \`${checkOutcome}\` |`,
-              `| Tofu Plan :pencil: | \`${planOutcome}\` |`,
+              `| Terraform Initialization :wrench:️ | \`${initOutcome}\` |`,
+              `| Terraform Check :white_check_mark: | \`${checkOutcome}\` |`,
+              `| Terraform Plan :pencil: | \`${planOutcome}\` |`,
               '',
               '<details>',
               '',
