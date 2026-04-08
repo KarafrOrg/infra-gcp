@@ -1,4 +1,4 @@
-name: Plan Terraform changes
+name: Apply Terraform changes
 on:
   workflow_call:
     inputs:
