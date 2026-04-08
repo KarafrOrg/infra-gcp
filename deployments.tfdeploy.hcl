@@ -142,7 +142,7 @@ deployment "production" {
               "attribute.ref"                = "assertion.ref"
               "attribute.workflow"           = "assertion.workflow"
               "attribute.actor"              = "assertion.actor"
-              "attrbute.workflow_ref"        = "assertion.workflow_ref"
+              "attribute.workflow_ref"        = "assertion.workflow_ref"
               "attribute.runner_environment" = "assertion.runner_environment"
             }
 
