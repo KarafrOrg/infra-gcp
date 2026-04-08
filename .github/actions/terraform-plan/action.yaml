@@ -117,7 +117,7 @@ runs:
         OIDC_TOKEN: ${{ env.OIDC_TOKEN }}
 
     - name: Upload Tofu logs as artifacts
-      uses: actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5 # v3
+      uses: actions/upload-artifact@v7
       if: always()
       with:
         name: tofu-logs-${{ inputs.environment }}-${{ github.sha }}
@@ -128,7 +128,7 @@ runs:
         retention-days: 7
 
     - name: Post plan to step summary
-      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7
+      uses: actions/github-script@v8
       if: always()
       env:
         PLAN_OUTCOME: ${{ steps.plan.outcome }}
@@ -149,35 +149,35 @@ runs:
           // Read plan output from file
           let planOutput = '';
           try {
-            planOutput = fs.readFileSync(planLogPath, 'utf8');
-            planOutput = planOutput
-              .split('\n')
-              .filter(line => !line.includes('Refreshing state...'))
-              .join('\n');
+              planOutput = fs.readFileSync(planLogPath, 'utf8');
+              planOutput = planOutput
+                  .split('\n')
+                  .filter(line => !line.includes('Refreshing state...'))
+                  .join('\n');
           } catch (error) {
-            planOutput = 'Error reading plan output: ' + error.message;
+              planOutput = 'Error reading plan output: ' + error.message;
           }
 
           const summary = [
-            `## Tofu Plan - ${environment}`,
-            '',
-            '| Step | Status |',
-            '| ---- | -------- |',
-            `| Tofu Initialization :wrench:️ | \`${initOutcome}\` |`,
-            `| Tofu Check :white_check_mark: | \`${checkOutcome}\` |`,
-            `| Tofu Plan :pencil: | \`${planOutcome}\` |`,
-            '',
-            '<details>',
-            '',
-            '<summary>Show Plan Output</summary>',
-            '',
-            '```terraform',
-            planOutput,
-            '```',
-            '',
-            '</details>',
-            '',
-            ':package: **Full logs available in workflow artifacts**'
+              `## Tofu Plan - ${environment}`,
+              '',
+              '| Step | Status |',
+              '| ---- | -------- |',
+              `| Tofu Initialization :wrench:️ | \`${initOutcome}\` |`,
+              `| Tofu Check :white_check_mark: | \`${checkOutcome}\` |`,
+              `| Tofu Plan :pencil: | \`${planOutcome}\` |`,
+              '',
+              '<details>',
+              '',
+              '<summary>Show Plan Output</summary>',
+              '',
+              '```terraform',
+              planOutput,
+              '```',
+              '',
+              '</details>',
+              '',
+              ':package: **Full logs available in workflow artifacts**'
           ].join('\n');
 
           await core.summary.addRaw(summary).write();
