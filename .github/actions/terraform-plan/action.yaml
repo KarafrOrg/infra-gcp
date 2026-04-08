@@ -37,8 +37,6 @@ runs:
     - name: Terraform init
       # language=bash
       run: |
-        set -euo pipefail
-        
         (mise init 2>&1) | tee init.log
         
         echo "stdout<<EOF" >> $GITHUB_OUTPUT
@@ -52,11 +50,7 @@ runs:
 
     - name: Terraform Check
       # language=bash
-      run: |
-        set -euo pipefail
-        export OIDC_TOKEN="${{ env.OIDC_TOKEN }}"
-        export ENVIRONMENT="${{ inputs.environment }}"
-        
+      run: |        
         (mise validate 2>&1) | tee check.log
         
         echo "stdout<<EOF" >> $GITHUB_OUTPUT
@@ -71,8 +65,6 @@ runs:
     - name: Terraform Plan
       # language=bash
       run: |
-        set -euo pipefail
-
         (${{ inputs.plan_command }} 2>&1) | tee plan.log
         
         echo "stdout<<EOF" >> $GITHUB_OUTPUT
