@@ -47,7 +47,8 @@ jobs:
           workload_identity_provider: ${{ inputs.gcp_wif_resource_id }}
           service_account: ${{ inputs.gcp_sa_email }}
           token_format: 'id_token'
-          id_token_audience: 'https://secretmanager.googleapis.com'
+          id_token_audience: '//iam.googleapis.com/projects/1019265211616/locations/global/workloadIdentityPools/terraform-cloud/providers/terraform-cloud'
+          id_token_include_email: 'true'
       - name: Retrieve TF Cloud credentials
         uses: ./.github/actions/terraform-cloud-login
         id: tf_cloud_login

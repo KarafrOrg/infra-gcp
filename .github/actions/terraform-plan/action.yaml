@@ -48,7 +48,7 @@ runs:
       id: init
       shell: bash
       env:
-        TF_API_TOKEN: ${{ env.TF_API_TOKEN }}
+        TF_API_TOKEN: ${{ inputs.tf_api_token }}
         OIDC_TOKEN: ${{ inputs.oidc_token }}
         ENVIRONMENT: ${{ inputs.environment }}
 
