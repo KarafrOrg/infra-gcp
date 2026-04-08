@@ -9,8 +9,6 @@ PROJECT_NUMBER = "1019265211616"
 [tasks.secrets]
 description = "Fetch secrets from GCP Secret Manager into Terraform auto vars"
 run = """
-set -euo pipefail
-
 get_secret() {
   gcloud secrets versions access latest --secret="$1"
 }
@@ -30,8 +28,6 @@ echo "Secrets written to live/${ENVIRONMENT}/secrets.auto.tfvars"
 description = "Initialize Terraform"
 depends = ["secrets"]
 run = """
-set -euo pipefail
-
 echo "Initializing Terraform in live/${ENVIRONMENT}"
 echo "Using terraform version $(terraform version)"
 
@@ -43,8 +39,6 @@ terraform init
 description = "Terraform plan"
 depends = ["init"]
 run = """
-set -euo pipefail
-
 cd "live/${ENVIRONMENT}"
 terraform plan
 """
@@ -53,8 +47,6 @@ terraform plan
 description = "Terraform apply"
 depends = ["init"]
 run = """
-set -euo pipefail
-
 cd "live/${ENVIRONMENT}"
 terraform apply -auto-approve
 """
@@ -63,7 +55,6 @@ terraform apply -auto-approve
 description = "Terraform validate"
 depends = ["init"]
 run = """
-set -euo pipefail
 cd "live/${ENVIRONMENT}"
 terraform validate
 """
@@ -72,7 +63,6 @@ terraform validate
 description = "Unlock Terraform state"
 depends = ["init"]
 run = """
-set -euo pipefail
 cd "live/${ENVIRONMENT}"
 terraform force-unlock -force-lock=true
 """
@@ -81,7 +71,6 @@ terraform force-unlock -force-lock=true
 description = "Terraform destroy"
 depends = ["init"]
 run = """
-set -euo pipefail
 cd "live/${ENVIRONMENT}"
 terraform destroy -auto-approve
 """
