@@ -1,11 +1,9 @@
 name: Login to Terraform Cloud
 description: |
-  This action logs into Terraform Cloud by retrieving the Terraform Cloud API token from GCP Secret Manager.
-  It sets the necessary environment variables for Terraform Cloud authentication, allowing subsequent 
-  Terraform commands to interact with Terraform Cloud seamlessly. 
-  
-  This action must be called AFTER the google-github-actions/auth action has been used to authenticate to GCP.
-  It relies on the authentication context set up by that action.
+  This action logs into Terraform Cloud using the provided GCP access token. It sets the necessary
+  environment variables for Terraform Cloud authentication, allowing subsequent Terraform commands to interact
+  with Terraform Cloud seamlessly. This action is designed to be used in a workflow that requires authentication
+  with Terraform Cloud, such as planning or applying Terraform configurations.
 inputs:
   terraform_access_token_secret_name:
     description: 'Name of the GCP secret manager secret to store the Terraform Cloud API token'
@@ -23,71 +21,6 @@ runs:
       # language=bash
       run: |
         set -euo pipefail
-        echo "Reading Terraform Cloud API token from GCP Secret Manager..."
-        
-        # Verify current gcloud auth configuration
-        echo "Current gcloud auth configuration:"
-        gcloud config list 2>&1 || true
-        echo "Active account:"
-        gcloud auth list --filter=status:ACTIVE --format="value(account)" 2>&1 || true
-        
-        # Read the secret value and store it in an environment variable
-        if ! TERRAFORM_CLOUD_API_TOKEN=$(gcloud secrets versions access latest --secret="${{ inputs.terraform_access_token_secret_name }}" 2>&1); then
-          echo "ERROR: Failed to read secret from GCP Secret Manager"
-          echo "Error details:"
-          echo "${TERRAFORM_CLOUD_API_TOKEN}"
-          
-          # Parse and display error more clearly
-          if echo "${TERRAFORM_CLOUD_API_TOKEN}" | grep -q "PERMISSION_DENIED"; then
-            echo ""
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo "Permission Denied: Unable to access secret"
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo ""
-            echo "The authenticated service account does not have permission to access the secret."
-            echo ""
-            echo "Troubleshooting steps:"
-            echo "  1. Verify the service account has 'roles/secretmanager.secretAccessor' role"
-            echo "  2. Check that the secret exists: ${{ inputs.terraform_access_token_secret_name }}"
-            echo "  3. Verify the google-github-actions/auth@v3 action ran successfully"
-            echo "  4. Check that the workload identity pool and provider exist and are enabled"
-            echo ""
-          elif echo "${TERRAFORM_CLOUD_API_TOKEN}" | grep -q "You do not currently have an active account"; then
-            echo ""
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo "Authentication Error: No active account"
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo ""
-            echo "Root cause: gcloud is not authenticated"
-            echo ""
-            echo "This action must be called AFTER the google-github-actions/auth@v3 action."
-            echo "Ensure your workflow includes:"
-            echo ""
-            echo "  - name: Login to GCP"
-            echo "    uses: google-github-actions/auth@v3"
-            echo "    id: gcp_auth"
-            echo "    with:"
-            echo "      workload_identity_provider: \${{ inputs.gcp_wif_resource_id }}"
-            echo "      service_account: \${{ inputs.gcp_sa_email }}"
-            echo ""
-            echo "  - name: Retrieve TF Cloud credentials"
-            echo "    uses: ./.github/actions/terraform-cloud-login"
-            echo ""
-          elif echo "${TERRAFORM_CLOUD_API_TOKEN}" | grep -q "NOT_FOUND"; then
-            echo ""
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo "Secret Not Found"
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo ""
-            echo "The secret '${{ inputs.terraform_access_token_secret_name }}' does not exist"
-            echo "in GCP Secret Manager, or you don't have permission to view it."
-            echo ""
-          fi
-          
-          exit 1
-        fi
-        
-        echo "TERRAFORM_CLOUD_API_TOKEN=${TERRAFORM_CLOUD_API_TOKEN}" >> $GITHUB_ENV
-        echo "✓ Successfully retrieved Terraform Cloud API token"
+        TF_API_TOKEN=$(gcloud secrets versions access latest --secret="${{ inputs.terraform_access_token_secret_name }}")
+        echo "TF_API_TOKEN=${TF_API_TOKEN}" >> $GITHUB_ENV
       shell: bash
-
