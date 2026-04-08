@@ -59,6 +59,10 @@ variable "external_identity_pools" {
       # Attribute-based access control
       attribute_name  = string
       attribute_value = string
+      # Optional custom IAM condition for additional security
+      iam_condition_title       = optional(string)
+      iam_condition_description = optional(string)
+      iam_condition_expression  = optional(string)
     })), {})
   }))
   default = {}

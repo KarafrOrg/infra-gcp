@@ -1,11 +1,11 @@
 required_providers {
   google = {
     source  = "hashicorp/google"
-    version = "~> 7.24"
+    version = "7.27.0"
   }
   kubernetes = {
     source  = "hashicorp/kubernetes"
-    version = "~> 2.35"
+    version = "3.0.1"
   }
 }
 
