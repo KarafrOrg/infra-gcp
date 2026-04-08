@@ -40,7 +40,7 @@ runs:
     - name: Terraform init
       # language=bash
       run: |
-        (mise init 2>&1) | tee init.log
+        (mise init 2>&1) | sed 's/\x1b\[[0-9;]*m//g' | tee init.log
         
         echo "stdout<<EOF" >> $GITHUB_OUTPUT
         cat init.log >> $GITHUB_OUTPUT
@@ -55,7 +55,7 @@ runs:
     - name: Terraform Check
       # language=bash
       run: |
-        (mise validate 2>&1) | tee check.log
+        (mise validate 2>&1) | sed 's/\x1b\[[0-9;]*m//g' | tee check.log
         
         echo "stdout<<EOF" >> $GITHUB_OUTPUT
         cat check.log >> $GITHUB_OUTPUT
@@ -69,7 +69,7 @@ runs:
     - name: Terraform Plan
       # language=bash
       run: |
-        (${{ inputs.plan_command }} 2>&1) | tee plan.log
+        (${{ inputs.plan_command }} 2>&1) | sed 's/\x1b\[[0-9;]*m//g' | tee plan.log
         
         echo "stdout<<EOF" >> $GITHUB_OUTPUT
         cat plan.log >> $GITHUB_OUTPUT

@@ -1,5 +1,5 @@
-gcp_audience              = "//iam.googleapis.com/projects/1019265211616/locations/global/workloadIdentityPools/github-actions-karafrorg/providers/oidc"
-gcp_service_account_email = "github-actions-infra-gcp@karafra-net.iam.gserviceaccount.com"
+gcp_audience              = "//iam.googleapis.com/projects/1019265211616/locations/global/workloadIdentityPools/terraform-cloud/providers/terraform-cloud"
+gcp_service_account_email = "terraform@karafra-net.iam.gserviceaccount.com"
 gcp_project_name          = "karafra-net"
 gcp_region                = "europe-central2"
 gcp_zone                  = "europe-central2-a"
@@ -19,37 +19,7 @@ gcp_service_service_accounts = {
     display_name = "GitHub Actions Service Account"
     description  = "Service account for GitHub Actions workflows"
     roles = [
-      # WIF & Service Account
-      "roles/iam.workloadIdentityUser",
-      "roles/iam.serviceAccountTokenCreator",
-      "roles/iam.serviceAccountUser",
-
-      # Secret Manager
-      "roles/secretmanager.viewer",
-      "roles/secretmanager.secretAccessor",
-      "roles/secretmanager.secretVersionManager",
-
-      # Service Usage / APIs
-      "roles/serviceusage.serviceUsageAdmin",
-      "roles/serviceusage.serviceUsageViewer",
-
-      # Pub/Sub
-      "roles/pubsub.admin",
-
-      # Monitoring & Logging
-      "roles/monitoring.metricWriter",
-      "roles/logging.logWriter",
-      "roles/cloudtrace.agent",
-
-      # Kubernetes / GKE
-      "roles/container.admin",
-
-      # Storage
-      "roles/storage.admin",
-      "roles/storage.objectAdmin",
-
-      # Project-level IAM
-      "roles/resourcemanager.projectIamAdmin"
+      "roles/owner"
     ]
   }
   "github-secret-rotator" = {
