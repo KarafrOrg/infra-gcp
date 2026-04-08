@@ -12,6 +12,9 @@ inputs:
     description: 'Command to run Terraform plan'
     required: false
     default: mise plan
+  tf_api_token:
+    description: 'Terraform Cloud API token (optional if using OIDC for authentication)'
+    required: true
 outputs:
   plan_outcome:
     description: 'The stdout from the Terraform plan command'
@@ -45,12 +48,13 @@ runs:
       id: init
       shell: bash
       env:
+        TF_API_TOKEN: ${{ env.TF_API_TOKEN }}
         OIDC_TOKEN: ${{ inputs.oidc_token }}
         ENVIRONMENT: ${{ inputs.environment }}
 
     - name: Terraform Check
       # language=bash
-      run: |        
+      run: |
         (mise validate 2>&1) | tee check.log
         
         echo "stdout<<EOF" >> $GITHUB_OUTPUT

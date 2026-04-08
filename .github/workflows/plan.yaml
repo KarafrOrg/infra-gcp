@@ -52,8 +52,7 @@ jobs:
       - name: Run Terraform plan
         uses: ./.github/actions/terraform-plan
         id: plan
-        env:
-          TF_API_TOKEN: ${{ steps.tf_cloud_login.outputs.terraform_cloud_api_token }}
         with:
           environment: ${{ inputs.environment }}
           oidc_token: ${{ steps.gcp_auth.outputs.id_token }}
+          tf_api_token: ${{ steps.tf_cloud_login.outputs.terraform_cloud_api_token }}
