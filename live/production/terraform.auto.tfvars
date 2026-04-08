@@ -19,10 +19,37 @@ gcp_service_service_accounts = {
     display_name = "GitHub Actions Service Account"
     description  = "Service account for GitHub Actions workflows"
     roles = [
+      # WIF & Service Account
       "roles/iam.workloadIdentityUser",
-      "roles/secretmanager.secretAccessor",
-      "roles/secretmanager.viewer",
       "roles/iam.serviceAccountTokenCreator",
+      "roles/iam.serviceAccountUser",
+
+      # Secret Manager
+      "roles/secretmanager.viewer",
+      "roles/secretmanager.secretAccessor",
+      "roles/secretmanager.secretVersionManager",
+
+      # Service Usage / APIs
+      "roles/serviceusage.serviceUsageAdmin",
+      "roles/serviceusage.serviceUsageViewer",
+
+      # Pub/Sub
+      "roles/pubsub.admin",
+
+      # Monitoring & Logging
+      "roles/monitoring.metricWriter",
+      "roles/logging.logWriter",
+      "roles/cloudtrace.agent",
+
+      # Kubernetes / GKE
+      "roles/container.admin",
+
+      # Storage
+      "roles/storage.admin",
+      "roles/storage.objectAdmin",
+
+      # Project-level IAM
+      "roles/resourcemanager.projectIamAdmin"
     ]
   }
   "github-secret-rotator" = {
