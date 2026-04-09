@@ -44,4 +44,3 @@ output "policy_summary" {
     custom_policies_count = length(var.custom_policies)
   }
 }
-
