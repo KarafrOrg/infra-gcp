@@ -17,7 +17,9 @@ gcp_service_service_accounts = {
     display_name = "GitHub Actions Service Account"
     description  = "Service account for orchestrating GCP infrastructure changes from GitHub Actions workflows"
     roles = [
-      "roles/owner"
+      "roles/compute.admin",
+      "roles/storage.admin",
+      "roles/iam.securityAdmin"
     ]
   }
   "github-secret-rotator" = {
