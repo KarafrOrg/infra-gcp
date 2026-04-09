@@ -116,7 +116,7 @@ external_identity_pools = {
 
     providers = {
       "oidc" = {
-        display_name = "GitHub OIDC"
+        display_name = "GitHub OIDC provider"
 
         oidc = {
           issuer_uri = "https://token.actions.githubusercontent.com"
