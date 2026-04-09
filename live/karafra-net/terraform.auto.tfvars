@@ -13,7 +13,7 @@ gcp_service_service_accounts = {
       "roles/iam.serviceAccountTokenCreator",
     ]
   }
-  "github-actions-infra-cloudflare" = {
+  "gha-infra-cloudflare" = {
     display_name = "GitHub Actions Cloudflare Service Account"
     description  = "Service account for orchestrating Cloudflare changes from GitHub Actions workflows"
     roles = [
@@ -175,7 +175,7 @@ external_identity_pools = {
         attribute_value       = "KarafrOrg/infra-terraform"
       }
       "infra-cloudflare" = {
-        service_account_email = "github-actions-infra-cloudflare@karafra-net.iam.gserviceaccount.com"
+        service_account_email = "gha-infra-cloudflare@karafra-net.iam.gserviceaccount.com"
         attribute_name        = "repository"
         attribute_value       = "KarafrOrg/infra-cloudflare"
       }
