@@ -4,7 +4,7 @@ enable_organization_policies = false
 
 gcp_service_service_accounts = {
   "github-actions-infra-cluster" = {
-    display_name = "GitHub Actions Service Account"
+    display_name = "GitHub Actions Cluster Service Account"
     description  = "Service account for GitHub Actions workflows"
     roles = [
       "roles/iam.workloadIdentityUser",
@@ -14,10 +14,12 @@ gcp_service_service_accounts = {
     ]
   }
   "github-actions-infra-gcp" = {
-    display_name = "GitHub Actions Service Account"
+    display_name = "GitHub Actions GCP Infrastructure Service Account"
     description  = "Service account for orchestrating GCP infrastructure changes from GitHub Actions workflows"
     roles = [
-      "roles/owner"
+      "roles/compute.admin",
+      "roles/storage.admin",
+      "roles/iam.securityAdmin"
     ]
   }
   "github-secret-rotator" = {
