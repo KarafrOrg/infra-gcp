@@ -34,7 +34,7 @@ module "kubernetes_service_account" {
 }
 
 module "google_org_policy" {
-  count  = var.enable_organization_policies ? 1 : 0
+  count  = var.enable_organization_policies
   source = "../google-project-organization"
 
   gcp_project_name = var.gcp_project_name
