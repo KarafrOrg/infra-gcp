@@ -15,7 +15,7 @@ terraform {
     organization = "karafrorg-homelab"
 
     workspaces {
-      name = "karafrorg_homelab_project_dev"
+      name = "karafrorg-infra-gcp-karafra-net_tmp"
     }
   }
 }
