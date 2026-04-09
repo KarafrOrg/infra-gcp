@@ -12,10 +12,10 @@ terraform {
   }
   backend "remote" {
     hostname     = "app.terraform.io"
-    organization = "karafrorg-homelab"
+    organization = "karafra-net"
 
     workspaces {
-      name = "karafrorg-infra-gcp-karafra-net_tmp"
+      name = "infra-gcp"
     }
   }
 }
