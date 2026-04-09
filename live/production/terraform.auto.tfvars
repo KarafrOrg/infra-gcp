@@ -1,16 +1,6 @@
 gcp_project_name = "karafra-net"
 
-enable_organization_policies = true
-org_policy_config = {
-  allowed_locations = [
-    "in:eu-locations"
-  ]
-  allowed_ingress_settings = [
-    "ALLOW_INTERNAL_ONLY",
-    "ALLOW_INTERNAL_AND_GCLB"
-  ]
-  custom_policies = {}
-}
+enable_organization_policies = false
 
 gcp_service_service_accounts = {
   "github-actions-infra-cluster" = {
