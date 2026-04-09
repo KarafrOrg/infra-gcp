@@ -10,6 +10,8 @@ module "infra-gcp" {
   kube_client_cert_data        = var.kube_client_cert_data
   kube_client_key_data         = var.kube_client_key_data
   kube_host                    = var.kube_host
+  org_policy_config            = var.org_policy_config
+  enable_organization_policies = var.enable_organization_policies
 
   providers = {
     google     = google
