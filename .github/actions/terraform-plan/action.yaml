@@ -4,7 +4,6 @@ inputs:
   environment:
     description: 'Environment to deploy to (e.g., production, staging)'
     required: true
-    default: production
   plan_command:
     description: 'Command to run Terraform plan'
     required: false
@@ -88,7 +87,7 @@ runs:
         # language=javascript
         script: |
           const fs = require('fs');
-          const { PLAN_OUTCOME, CHECK_OUTCOME, INIT_OUTCOME, PLAN_LOG_PATH, ENVIRONMENT } = process.env;
+          const {PLAN_OUTCOME, CHECK_OUTCOME, INIT_OUTCOME, PLAN_LOG_PATH, ENVIRONMENT} = process.env;
 
           function stripAnsiCodes(text) {
               return text
@@ -158,7 +157,7 @@ runs:
                   return 'No changes. Your infrastructure matches the configuration.';
               }
 
-              const performActionsIndex = lines.findIndex(line => 
+              const performActionsIndex = lines.findIndex(line =>
                   line.includes('Terraform will perform the following actions:')
               );
 
@@ -171,7 +170,7 @@ runs:
                   startIndex++;
               }
 
-              const endIndex = lines.findIndex((line, i) => 
+              const endIndex = lines.findIndex((line, i) =>
                   i >= startIndex && (line.includes('Plan:') || line.includes('Finished in'))
               );
 

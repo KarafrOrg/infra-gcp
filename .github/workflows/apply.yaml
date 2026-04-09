@@ -64,6 +64,8 @@ jobs:
         id: plan
         env:
           TF_TOKEN_app_terraform_io: ${{ steps.tf_cloud_login.outputs.terraform_cloud_api_token }}
+        with:
+          environment: ${{ inputs.environment }}
       - name: Run Terraform apply
         run: mise apply
         id: apply
