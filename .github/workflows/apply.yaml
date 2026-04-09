@@ -40,6 +40,7 @@ jobs:
   apply:
     name: Apply Terraform changes
     runs-on: ${{ inputs.runs_on }}
+    environment: ${{ inputs.environment }}
     env:
       ENVIRONMENT: ${{ inputs.environment }}
     steps:
