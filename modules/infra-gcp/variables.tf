@@ -29,8 +29,8 @@ variable "kube_client_ca_cert" {
 
 variable "kube_host" {
   description = "Kubernetes API server host URL for Kubernetes provider"
-  type = string
-  ephemeral = true
+  type        = string
+  ephemeral   = true
 }
 # endregion
 
@@ -98,9 +98,11 @@ variable "k8s_clusters" {
 variable "external_identity_pools" {
   description = "Map of external identity pool configurations (GitHub Actions, GitLab CI, AWS, etc.)"
   type = map(object({
-    display_name = optional(string)
-    description  = optional(string)
-    disabled     = optional(bool, false)
+    display_name    = optional(string)
+    description     = optional(string)
+    disabled        = optional(bool, false)
+    prevent_destroy = optional(bool, false)
+
     providers = map(object({
       display_name        = optional(string)
       description         = optional(string)

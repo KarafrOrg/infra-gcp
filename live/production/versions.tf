@@ -11,7 +11,7 @@ terraform {
     }
   }
   backend "remote" {
-    hostname = "app.terraform.io"
+    hostname     = "app.terraform.io"
     organization = "karafrorg-homelab"
 
     workspaces {
@@ -28,4 +28,3 @@ provider "kubernetes" {
 }
 
 provider "google" {}
-

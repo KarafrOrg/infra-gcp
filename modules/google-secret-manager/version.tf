@@ -4,7 +4,7 @@ terraform {
       source = "hashicorp/google"
     }
     kubernetes = {
-      source  = "hashicorp/kubernetes"
+      source = "hashicorp/kubernetes"
     }
   }
 }

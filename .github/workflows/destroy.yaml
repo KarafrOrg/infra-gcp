@@ -1,15 +1,15 @@
-name: Apply Terraform changes
+name: Destroy Terraform infrastructure
 on:
   workflow_call:
     inputs:
       concurrency_group:
         required: false
         type: string
-        default: 'apply-plan-${{ github.ref }}'
+        default: 'destroy-infrastructure-${{ github.ref }}'
       run_name:
         required: false
         type: string
-        default: 'Apply Terraform changes - ${{ github.ref }}'
+        default: 'Destroy Terraform infrastructure'
       runs_on:
         required: false
         type: string
@@ -27,6 +27,9 @@ on:
         required: false
         type: string
         default: '300s'
+      approve_destroy:
+        type: boolean
+        default: false
 
 concurrency:
   group: ${{ inputs.concurrency_group }}
@@ -37,8 +40,8 @@ permissions:
   id-token: write
 
 jobs:
-  apply:
-    name: Apply Terraform changes
+  destroy:
+    name: Destroy infrastructure
     runs-on: ${{ inputs.runs_on }}
     env:
       ENVIRONMENT: ${{ inputs.environment }}
@@ -58,13 +61,9 @@ jobs:
       - name: Retrieve TF Cloud credentials
         uses: ./.github/actions/terraform-cloud-login
         id: tf_cloud_login
-      - name: Run Terraform plan
-        uses: ./.github/actions/terraform-plan
-        id: plan
-        env:
-          TF_TOKEN_app_terraform_io: ${{ steps.tf_cloud_login.outputs.terraform_cloud_api_token }}
-      - name: Run Terraform apply
-        run: mise apply
-        id: apply
+      - name: Destroy Terraform infrastructure
+        run: mise destroy
+        if: inputs.approve_distroy
+        id: destroy
         env:
           TF_TOKEN_app_terraform_io: ${{ steps.tf_cloud_login.outputs.terraform_cloud_api_token }}

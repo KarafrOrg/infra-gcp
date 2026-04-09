@@ -1,6 +1,10 @@
 name: Plan Terraform changes
 description: GitHub Action to plan Terraform changes
 inputs:
+  environment:
+    description: 'Environment to deploy to (e.g., production, staging)'
+    required: true
+    default: production
   plan_command:
     description: 'Command to run Terraform plan'
     required: false
@@ -79,6 +83,7 @@ runs:
         CHECK_OUTCOME: ${{ steps.check.outcome }}
         INIT_OUTCOME: ${{ steps.init.outcome }}
         PLAN_LOG_PATH: plan.log
+        ENVIRONMENT: ${{ inputs.environment }}
       with:
         # language=javascript
         script: |

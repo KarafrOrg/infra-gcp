@@ -1,4 +1,4 @@
-gcp_project_name          = "karafra-net"
+gcp_project_name = "karafra-net"
 
 gcp_service_service_accounts = {
   "github-actions-infra-cluster" = {
@@ -112,6 +112,7 @@ external_identity_pools = {
   "github-actions-karafrorg" = {
     display_name = "GitHub actions"
     description  = "Workload identity for GitHub Actions workflows"
+    prevent_destroy = true
 
     providers = {
       "oidc" = {

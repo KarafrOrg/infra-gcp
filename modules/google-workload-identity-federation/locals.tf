@@ -36,9 +36,10 @@ locals {
   external_providers = flatten([
     for pool_key, pool_value in var.external_identity_pools : [
       for provider_key, provider_value in pool_value.providers : {
-        pool_key     = pool_key
-        provider_key = provider_key
-        provider     = provider_value
+        pool_key        = pool_key
+        provider_key    = provider_key
+        provider        = provider_value
+        prevent_destroy = coalesce(pool_value.prevent_destroy, false) || coalesce(provider_value.prevent_destroy, false)
       }
     ]
   ])

@@ -31,11 +31,11 @@ output "workload_identity_providers" {
     {
       for k, v in google_iam_workload_identity_pool_provider.k8s_oidc :
       k => {
-        name         = v.name
-        provider_id  = v.workload_identity_pool_provider_id
-        issuer_uri   = v.oidc[0].issuer_uri
-        state        = v.state
-        type         = "kubernetes"
+        name        = v.name
+        provider_id = v.workload_identity_pool_provider_id
+        issuer_uri  = v.oidc[0].issuer_uri
+        state       = v.state
+        type        = "kubernetes"
       }
     },
     {

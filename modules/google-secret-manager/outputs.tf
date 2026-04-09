@@ -1,4 +1,3 @@
-
 output "rotation_pub_sub_topics" {
   description = "Map of Pub/Sub topics for secret rotation notifications"
   value = {
