@@ -28,13 +28,11 @@ variable "external_identity_pools" {
     display_name = optional(string)
     description  = optional(string)
     disabled     = optional(bool, false)
-    prevent_destroy = optional(bool, false)
 
     providers = map(object({
       display_name        = optional(string)
       description         = optional(string)
       disabled            = optional(bool, false)
-      prevent_destroy     = optional(bool, false)
       attribute_mapping   = optional(map(string))
       attribute_condition = optional(string)
 

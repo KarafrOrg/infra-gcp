@@ -43,10 +43,6 @@ resource "google_iam_workload_identity_pool" "external_pools" {
   display_name              = try(each.value.display_name, each.key)
   description               = try(each.value.description, "Workload Identity Pool for ${each.key}")
   disabled                  = try(each.value.disabled, false)
-
-  lifecycle {
-    prevent_destroy = each.value.prevent_destroy
-  }
 }
 
 resource "google_iam_workload_identity_pool_provider" "external_providers" {
@@ -83,10 +79,6 @@ resource "google_iam_workload_identity_pool_provider" "external_providers" {
     content {
       idp_metadata_xml = saml.value["idp_metadata_xml"]
     }
-  }
-
-  lifecycle {
-    prevent_destroy = each.value["prevent_destroy"]
   }
 }
 
