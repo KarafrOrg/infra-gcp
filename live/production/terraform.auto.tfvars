@@ -1,5 +1,32 @@
 gcp_project_name = "karafra-net"
 
+enable_organization_policies = true
+org_policy_config = {
+  enforce_uniform_bucket_level_access         = true
+  restrict_public_ip_cloud_sql                = true
+  require_os_login                            = true
+  require_shielded_vm                         = true
+  disable_service_account_key_creation        = true
+  enforce_automatic_iam_grants_for_default_sa = true
+  enforce_detailed_audit_logging              = true
+
+  restrict_vpc_peering         = true
+  restrict_protocol_forwarding = true
+  disable_default_network_creation = true
+  restrict_vm_external_ip      = false  # Set to true if VMs should not have external IPs
+
+  allowed_locations = [
+    "in:eu-locations"
+  ]
+
+  allowed_ingress_settings = [
+    "ALLOW_INTERNAL_ONLY",
+    "ALLOW_INTERNAL_AND_GCLB"
+  ]
+
+  custom_policies = {}
+}
+
 gcp_service_service_accounts = {
   "github-actions-infra-cluster" = {
     display_name = "GitHub Actions Service Account"
@@ -112,7 +139,6 @@ external_identity_pools = {
   "github-actions-karafrorg" = {
     display_name = "GitHub actions"
     description  = "Workload identity for GitHub Actions workflows"
-    prevent_destroy = true
 
     providers = {
       "oidc" = {
@@ -151,4 +177,3 @@ external_identity_pools = {
     }
   }
 }
-

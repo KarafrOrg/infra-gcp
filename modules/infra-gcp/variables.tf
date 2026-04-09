@@ -98,10 +98,9 @@ variable "k8s_clusters" {
 variable "external_identity_pools" {
   description = "Map of external identity pool configurations (GitHub Actions, GitLab CI, AWS, etc.)"
   type = map(object({
-    display_name    = optional(string)
-    description     = optional(string)
-    disabled        = optional(bool, false)
-    prevent_destroy = optional(bool, false)
+    display_name = optional(string)
+    description  = optional(string)
+    disabled     = optional(bool, false)
 
     providers = map(object({
       display_name        = optional(string)
@@ -140,3 +139,42 @@ variable "external_identity_pools" {
   default = {}
 }
 # endregion
+
+# region Organization Policies
+variable "enable_organization_policies" {
+  description = "Enable organization policies for security and compliance"
+  type        = bool
+  default     = false
+}
+
+variable "org_policy_config" {
+  description = "Configuration for organization policies"
+  type = object({
+    enforce_uniform_bucket_level_access            = optional(bool, true)
+    restrict_public_ip_cloud_sql                   = optional(bool, true)
+    require_os_login                               = optional(bool, true)
+    restrict_vpc_peering                           = optional(bool, true)
+    disable_service_account_key_creation           = optional(bool, true)
+    restrict_protocol_forwarding                   = optional(bool, true)
+    enforce_detailed_audit_logging                 = optional(bool, true)
+    disable_default_network_creation               = optional(bool, true)
+    enforce_automatic_iam_grants_for_default_sa    = optional(bool, true)
+    require_shielded_vm                            = optional(bool, true)
+    restrict_vm_external_ip                        = optional(bool, false)
+    allowed_locations                              = optional(list(string), [])
+    allowed_policy_member_domains                  = optional(list(string), [])
+    allowed_ingress_settings                       = optional(list(string), ["ALLOW_INTERNAL_ONLY", "ALLOW_INTERNAL_AND_GCLB"])
+    custom_policies                                = optional(map(object({
+      constraint  = string
+      policy_type = string
+      enforce     = optional(bool)
+      allow       = optional(list(string))
+      deny        = optional(list(string))
+      allow_all   = optional(bool)
+      deny_all    = optional(bool)
+    })), {})
+  })
+  default = {}
+}
+# endregion
+
