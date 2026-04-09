@@ -45,7 +45,7 @@ resource "google_iam_workload_identity_pool" "external_pools" {
   disabled                  = try(each.value.disabled, false)
 
   lifecycle {
-    prevent_destroy = try(each.value.prevent_destroy, false)
+    prevent_destroy = each.value.prevent_destroy
   }
 }
 
@@ -86,7 +86,7 @@ resource "google_iam_workload_identity_pool_provider" "external_providers" {
   }
 
   lifecycle {
-    prevent_destroy = try(each.value["prevent_destroy"], false)
+    prevent_destroy = each.value["prevent_destroy"]
   }
 }
 
