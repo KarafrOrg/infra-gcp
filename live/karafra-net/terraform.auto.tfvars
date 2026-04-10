@@ -8,8 +8,7 @@ gcp_service_service_accounts = {
     description  = "Service account for GitHub Actions workflows orchestrating OVH resources"
     roles = [
       "roles/iam.workloadIdentityUser",
-      "roles/secretmanager.secretAccessor",
-      "roles/secretmanager.viewer",
+      "roles/secretmanager.admin",
       "roles/iam.serviceAccountTokenCreator",
     ]
   }
