@@ -23,6 +23,16 @@ gcp_service_service_accounts = {
       "roles/iam.serviceAccountTokenCreator",
     ]
   }
+  "gha-infra-github" = {
+    display_name = "GitHub Actions GitHub Service Account"
+    description  = "Service account for orchestrating GitHub changes from GitHub Actions workflows"
+    roles = [
+      "roles/iam.workloadIdentityUser",
+      "roles/secretmanager.secretAccessor",
+      "roles/secretmanager.viewer",
+      "roles/iam.serviceAccountTokenCreator",
+    ]
+  }
   "github-actions-infra-terraform" = {
     display_name = "GitHub Actions Terraform Service Account"
     description  = "Service account for orchestrating Terraform runs from GitHub Actions workflows"
@@ -178,6 +188,11 @@ external_identity_pools = {
         service_account_email = "gha-infra-cloudflare@karafra-net.iam.gserviceaccount.com"
         attribute_name        = "repository"
         attribute_value       = "KarafrOrg/infra-cloudflare"
+      }
+      "gha-infra-github" = {
+        service_account_email = "gha-infra-github@karafra-net.iam.gserviceaccount.com"
+        attribute_name        = "repository"
+        attribute_value       = "KarafrOrg/infra-github"
       }
     }
   }
