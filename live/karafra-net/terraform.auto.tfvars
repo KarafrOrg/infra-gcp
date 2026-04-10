@@ -204,7 +204,7 @@ external_identity_pools = {
         attribute_name        = "repository"
         attribute_value       = "KarafrOrg/infra-github"
       }
-      "gha-infra-github" = {
+      "gha-infra-ovh" = {
         service_account_email = "gha-infra-ovh@karafra-net.iam.gserviceaccount.com"
         attribute_name        = "repository"
         attribute_value       = "KarafrOrg/infra-ovh"
