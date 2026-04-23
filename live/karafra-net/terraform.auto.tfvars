@@ -126,37 +126,7 @@ k8s_ca_certificate_refs = {
 pub_sub_topic_prefix         = "k8s-ca-rotation"
 secret_replication_automatic = true
 
-k8s_clusters = {
-  "k8s-karafra-net" = {
-    issuer_uri        = "https://kubernetes.default.svc.cluster.local"
-    display_name      = "KarafraNet Kubernetes cluster"
-    description       = "Workload Identity Federation for production k8s cluster"
-    default_namespace = "default"
-    allowed_audiences = [
-      "sts.googleapis.com"
-    ]
-    jwks_json_data = {
-      secret_name = "k8s-production-oidc-jwks"
-    }
-    kubernetes_service_accounts = {
-      "cluster-admin" = {
-        namespace                 = "kube-system"
-        gcp_service_account_email = "k8s-admin@karafra-net.iam.gserviceaccount.com"
-        create_k8s_sa             = true
-        k8s_sa_labels = {
-          app  = "cluster-admin"
-          tier = "infrastructure"
-        }
-      }
-
-      "default-app" = {
-        namespace                 = "default"
-        gcp_service_account_email = "k8s-secret-reader@karafra-net.iam.gserviceaccount.com"
-        create_k8s_sa             = true
-      }
-    }
-  }
-}
+k8s_clusters = {}
 
 external_identity_pools = {
   "github-actions-karafrorg" = {
