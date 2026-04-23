@@ -3,6 +3,15 @@ gcp_project_name = "karafra-net"
 enable_organization_policies = false
 
 gcp_service_service_accounts = {
+  "gha-infra-cluster" = {
+    display_name = "GitHub Actions Cluster Service Account"
+    description  = "Service account for GitHub Actions workflows orchestrating cluster bootstrapping"
+    roles = [
+      "roles/iam.workloadIdentityUser",
+      "roles/secretmanager.admin",
+      "roles/iam.serviceAccountTokenCreator",
+    ]
+  }
   "gha-infra-ovh" = {
     display_name = "GitHub Actions OVH Service Account"
     description  = "Service account for GitHub Actions workflows orchestrating OVH resources"
@@ -207,6 +216,11 @@ external_identity_pools = {
         service_account_email = "gha-infra-ovh@karafra-net.iam.gserviceaccount.com"
         attribute_name        = "repository"
         attribute_value       = "KarafrOrg/infra-ovh"
+      }
+      "gha-infra-cluster" = {
+        service_account_email = "gha-infra-cluster@karafra-net.iam.gserviceaccount.com"
+        attribute_name        = "repository"
+        attribute_value       = "KarafrOrg/infra-cluster"
       }
     }
   }
