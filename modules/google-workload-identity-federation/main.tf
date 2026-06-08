@@ -8,23 +8,25 @@ resource "google_iam_workload_identity_pool" "k8s_clusters" {
 }
 
 data "google_secret_manager_secret_version" "k8s_jwks" {
-  for_each = var.k8s_clusters
-  project  = var.gcp_project_name
-  secret   = each.value.jwks_json_data.secret_name
+  for_each = {
+    for cluster in var.k8s_clusters : cluster.key => cluster.value if try(cluster.value.jwks_json_data.secret_name, null) != null
+  }
+  project = var.gcp_project_name
+  secret  = each.value.jwks_json_data.secret_name
 }
 
 resource "google_iam_workload_identity_pool_provider" "k8s_oidc" {
   for_each = var.k8s_clusters
 
-  project                              = var.gcp_project_name
-  workload_identity_pool_id            = google_iam_workload_identity_pool.k8s_clusters[each.key].workload_identity_pool_id
-  workload_identity_pool_provider_id   = "oidc"
-  display_name                         = "In-cluster OIDC provider"
+  project                            = var.gcp_project_name
+  workload_identity_pool_id          = google_iam_workload_identity_pool.k8s_clusters[each.key].workload_identity_pool_id
+  workload_identity_pool_provider_id = "oidc"
+  display_name                       = "In-cluster OIDC provider"
 
   oidc {
     issuer_uri        = each.value.issuer_uri
     allowed_audiences = each.value.allowed_audiences
-    jwks_json         = data.google_secret_manager_secret_version.k8s_jwks[each.key].secret_data
+    jwks_json         = try(data.google_secret_manager_secret_version.k8s_jwks[each.key].secret_data, null)
   }
 
   attribute_mapping = {

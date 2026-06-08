@@ -6,22 +6,8 @@ variable "gcp_project_name" {
 # endregion
 
 # region Kubernetes provider variables
-variable "kube_client_cert_data" {
-  description = "Base64 encoded client certificate data for Kubernetes provider"
-  type        = string
-  sensitive   = true
-  ephemeral   = true
-}
-
-variable "kube_client_key_data" {
-  description = "Base64 encoded client key data for Kubernetes provider"
-  type        = string
-  sensitive   = true
-  ephemeral   = true
-}
-
-variable "kube_client_ca_cert" {
-  description = "Base64 encoded cluster CA certificate data for Kubernetes provider"
+variable "kube_token" {
+  description = "Bearer token for Kubernetes provider authentication"
   type        = string
   sensitive   = true
   ephemeral   = true
@@ -86,9 +72,9 @@ variable "k8s_clusters" {
       k8s_sa_labels                   = optional(map(string), {})
       automount_service_account_token = optional(bool, true)
     }))
-    jwks_json_data = object({
+    jwks_json_data = optional(object({
       secret_name = string
-    })
+    }))
   }))
   default = {}
 }
@@ -150,21 +136,21 @@ variable "enable_organization_policies" {
 variable "org_policy_config" {
   description = "Configuration for organization policies"
   type = object({
-    enforce_uniform_bucket_level_access            = optional(bool, true)
-    restrict_public_ip_cloud_sql                   = optional(bool, true)
-    require_os_login                               = optional(bool, true)
-    restrict_vpc_peering                           = optional(bool, true)
-    disable_service_account_key_creation           = optional(bool, true)
-    restrict_protocol_forwarding                   = optional(bool, true)
-    enforce_detailed_audit_logging                 = optional(bool, true)
-    disable_default_network_creation               = optional(bool, true)
-    enforce_automatic_iam_grants_for_default_sa    = optional(bool, true)
-    require_shielded_vm                            = optional(bool, true)
-    restrict_vm_external_ip                        = optional(bool, false)
-    allowed_locations                              = optional(list(string), [])
-    allowed_policy_member_domains                  = optional(list(string), [])
-    allowed_ingress_settings                       = optional(list(string), ["ALLOW_INTERNAL_ONLY", "ALLOW_INTERNAL_AND_GCLB"])
-    custom_policies                                = optional(map(object({
+    enforce_uniform_bucket_level_access         = optional(bool, true)
+    restrict_public_ip_cloud_sql                = optional(bool, true)
+    require_os_login                            = optional(bool, true)
+    restrict_vpc_peering                        = optional(bool, true)
+    disable_service_account_key_creation        = optional(bool, true)
+    restrict_protocol_forwarding                = optional(bool, true)
+    enforce_detailed_audit_logging              = optional(bool, true)
+    disable_default_network_creation            = optional(bool, true)
+    enforce_automatic_iam_grants_for_default_sa = optional(bool, true)
+    require_shielded_vm                         = optional(bool, true)
+    restrict_vm_external_ip                     = optional(bool, false)
+    allowed_locations                           = optional(list(string), [])
+    allowed_policy_member_domains               = optional(list(string), [])
+    allowed_ingress_settings                    = optional(list(string), ["ALLOW_INTERNAL_ONLY", "ALLOW_INTERNAL_AND_GCLB"])
+    custom_policies = optional(map(object({
       constraint  = string
       policy_type = string
       enforce     = optional(bool)

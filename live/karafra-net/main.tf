@@ -6,9 +6,7 @@ module "infra-gcp" {
   pub_sub_topic_prefix         = var.pub_sub_topic_prefix
   k8s_clusters                 = var.k8s_clusters
   external_identity_pools      = var.external_identity_pools
-  kube_client_ca_cert          = var.kube_client_ca_cert
-  kube_client_cert_data        = var.kube_client_cert_data
-  kube_client_key_data         = var.kube_client_key_data
+  kube_token                   = var.kube_token
   kube_host                    = var.kube_host
   org_policy_config            = var.org_policy_config
   enable_organization_policies = var.enable_organization_policies
