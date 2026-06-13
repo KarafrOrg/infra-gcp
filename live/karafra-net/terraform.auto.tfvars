@@ -23,16 +23,6 @@ gcp_service_service_accounts = {
       "roles/iam.serviceAccountTokenCreator",
     ]
   }
-  "github-actions-infra-cluster" = {
-    display_name = "GitHub Actions Cluster Service Account"
-    description  = "Service account for GitHub Actions workflows orchestrating k8s cluster resources"
-    roles = [
-      "roles/iam.workloadIdentityUser",
-      "roles/secretmanager.secretAccessor",
-      "roles/secretmanager.viewer",
-      "roles/iam.serviceAccountTokenCreator",
-    ]
-  }
   "gha-infra-cloudflare" = {
     display_name = "GitHub Actions Cloudflare Service Account"
     description  = "Service account for orchestrating Cloudflare changes from GitHub Actions workflows"
@@ -186,11 +176,6 @@ external_identity_pools = {
     }
 
     service_account_bindings = {
-      "infra-cluster" = {
-        service_account_email = "github-actions-infra-cluster@karafra-net.iam.gserviceaccount.com"
-        attribute_name        = "repository"
-        attribute_value       = "KarafrOrg/infra-cluster"
-      }
       "infra-gcp" = {
         service_account_email = "github-actions-infra-gcp@karafra-net.iam.gserviceaccount.com"
         attribute_name        = "repository"
