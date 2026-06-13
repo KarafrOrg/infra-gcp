@@ -9,6 +9,8 @@ gcp_service_service_accounts = {
     roles = [
       "roles/iam.workloadIdentityUser",
       "roles/secretmanager.admin",
+      "roles/secretmanager.viewer",
+      "roles/iam.serviceAccountKeys.create",
       "roles/iam.serviceAccountTokenCreator",
     ]
   }
