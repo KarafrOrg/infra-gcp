@@ -120,18 +120,21 @@ secret_replication_automatic = true
 
 k8s_clusters = {
   "k8s-karafra-net" = {
-    issuer_uri        = "https://kubernetes.karafra.net"
+    issuer_uri        = "https://api.k8s.karafra.net:6443"
     display_name      = "KarafraNet Kubernetes cluster"
     description       = "Workload Identity Federation for production k8s cluster"
     default_namespace = "default"
+
     allowed_audiences = [
       "sts.googleapis.com"
     ]
+
     kubernetes_service_accounts = {
       "cluster-admin" = {
         namespace                 = "kube-system"
         gcp_service_account_email = "k8s-admin@karafra-net.iam.gserviceaccount.com"
         create_k8s_sa             = true
+
         k8s_sa_labels = {
           app  = "cluster-admin"
           tier = "infrastructure"
@@ -139,7 +142,7 @@ k8s_clusters = {
       }
 
       "default-app" = {
-        namespace                 = "default"
+        namespace                 = "kube-system"
         gcp_service_account_email = "k8s-secret-reader@karafra-net.iam.gserviceaccount.com"
         create_k8s_sa             = true
       }

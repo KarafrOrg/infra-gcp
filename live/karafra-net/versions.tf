@@ -21,8 +21,11 @@ terraform {
 }
 
 provider "kubernetes" {
-  host                   = var.kube_host
-  token                  = var.kube_token
+  host = "https://${var.k8s_cluster_host}:6443"
+
+  client_certificate     = base64decode(var.k8s_cluster_client_certificate)
+  client_key             = base64decode(var.k8s_cluster_token)
+  cluster_ca_certificate = base64decode(var.k8s_cluster_certificate_authority)
 }
 
 provider "google" {}

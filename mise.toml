@@ -6,8 +6,10 @@ get_secret() {
 }
 
 cat > live/${ENVIRONMENT}/secrets.auto.tfvars <<EOF
-kube_host  = "$(get_secret k8s-production-host)"
-kube_token = "$(get_secret k8s-production-client-token)"
+k8s_cluster_token                 = "$(get_secret k8s-api-token)"
+k8s_cluster_host                  = "$(get_secret k8s-api-endpoint)"
+k8s_cluster_client_certificate    = "$(get_secret k8s-api-client-certificate)"
+k8s_cluster_certificate_authority = "$(get_secret k8s-api-certificate-authority)"
 EOF
 
 echo "Secrets written to live/${ENVIRONMENT}/secrets.auto.tfvars"

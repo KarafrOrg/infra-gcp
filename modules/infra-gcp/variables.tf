@@ -6,17 +6,24 @@ variable "gcp_project_name" {
 # endregion
 
 # region Kubernetes provider variables
-variable "kube_token" {
-  description = "Bearer token for Kubernetes provider authentication"
+variable "k8s_cluster_token" {
+  description = "The authentication token for the Kubernetes cluster."
   type        = string
-  sensitive   = true
-  ephemeral   = true
 }
 
-variable "kube_host" {
-  description = "Kubernetes API server host URL for Kubernetes provider"
+variable "k8s_cluster_client_certificate" {
+  description = "The client certificate for the Kubernetes cluster."
   type        = string
-  ephemeral   = true
+}
+
+variable "k8s_cluster_certificate_authority" {
+  description = "The certificate authority for the Kubernetes cluster."
+  type        = string
+}
+
+variable "k8s_cluster_host" {
+  description = "The host URL of the Kubernetes cluster."
+  type        = string
 }
 # endregion
 
