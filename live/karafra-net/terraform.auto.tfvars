@@ -120,7 +120,7 @@ secret_replication_automatic = true
 
 k8s_clusters = {
   "k8s-karafra-net" = {
-    issuer_uri        = "https://api.k8s.karafra.net:6443"
+    issuer_uri        = "https://oidc.k8s.karafra.net"
     display_name      = "KarafraNet Kubernetes cluster"
     description       = "Workload Identity Federation for production k8s cluster"
     default_namespace = "default"
