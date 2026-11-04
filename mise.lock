@@ -5,24 +5,31 @@ version = "564.0.0"
 backend = "vfox:mise-plugins/vfox-gcloud"
 
 [tools.gcloud."platforms.linux-arm64"]
+checksum = "sha256:92f7581e434ae44f89d379936e6e7a20f0c9a78439b5834f9b21bde8b3ed8ec6"
 url = "https://storage.googleapis.com/cloud-sdk-release/google-cloud-sdk-564.0.0-linux-arm.tar.gz"
 
 [tools.gcloud."platforms.linux-arm64-musl"]
+checksum = "sha256:92f7581e434ae44f89d379936e6e7a20f0c9a78439b5834f9b21bde8b3ed8ec6"
 url = "https://storage.googleapis.com/cloud-sdk-release/google-cloud-sdk-564.0.0-linux-arm.tar.gz"
 
 [tools.gcloud."platforms.linux-x64"]
+checksum = "sha256:e6e85df426861590178505dde16e1c7c06c806d24a6e2f62b2bdc39f677371c7"
 url = "https://storage.googleapis.com/cloud-sdk-release/google-cloud-sdk-564.0.0-linux-x86_64.tar.gz"
 
 [tools.gcloud."platforms.linux-x64-musl"]
+checksum = "sha256:e6e85df426861590178505dde16e1c7c06c806d24a6e2f62b2bdc39f677371c7"
 url = "https://storage.googleapis.com/cloud-sdk-release/google-cloud-sdk-564.0.0-linux-x86_64.tar.gz"
 
 [tools.gcloud."platforms.macos-arm64"]
+checksum = "sha256:d76c1a5766d50815c9d35218bd74b3c2030b6d3cd5344ee6422aea583702f605e"
 url = "https://storage.googleapis.com/cloud-sdk-release/google-cloud-sdk-564.0.0-darwin-arm.tar.gz"
 
 [tools.gcloud."platforms.macos-x64"]
+checksum = "sha256:0c6840e9635b7cb3f3f2e03d37b63c0d65e76968f02e7d5fa551c03621721d1d"
 url = "https://storage.googleapis.com/cloud-sdk-release/google-cloud-sdk-564.0.0-darwin-x86_64.tar.gz"
 
 [tools.gcloud."platforms.windows-x64"]
+checksum = "sha256:6f3e141ba21c34e658c391eadc4651b05aa9c25c9292f0cb29e48ae663f72b32"
 url = "https://storage.googleapis.com/cloud-sdk-release/google-cloud-sdk-564.0.0-windows-x86_64.zip"
 
 [[tools.terraform]]
