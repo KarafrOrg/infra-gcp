@@ -38,8 +38,7 @@ gcp_service_service_accounts = {
     description  = "Service account for orchestrating GitHub changes from GitHub Actions workflows"
     roles = [
       "roles/iam.workloadIdentityUser",
-      "roles/secretmanager.secretAccessor",
-      "roles/secretmanager.viewer",
+      "roles/secretmanager.admin",
       "roles/iam.serviceAccountTokenCreator",
     ]
   }
