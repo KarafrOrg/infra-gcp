@@ -2,6 +2,7 @@ module "infra-gcp" {
   source                            = "../../modules/infra-gcp"
   gcp_project_name                  = var.gcp_project_name
   gcp_service_service_accounts      = var.gcp_service_service_accounts
+  gcp_object_storage                = var.gcp_object_storage
   k8s_ca_certificate_refs           = var.k8s_ca_certificate_refs
   pub_sub_topic_prefix              = var.pub_sub_topic_prefix
   k8s_clusters                      = var.k8s_clusters

@@ -4,6 +4,12 @@ module "google_service_account" {
   gcp_project_name = var.gcp_project_name
 }
 
+module "google_object_storage" {
+  source           = "../google-object-storage"
+  gcp_project_name = var.gcp_project_name
+  object_storage   = var.gcp_object_storage
+}
+
 module "google_secret_manager" {
   source                  = "../google-secret-manager"
   gcp_project_name        = var.gcp_project_name

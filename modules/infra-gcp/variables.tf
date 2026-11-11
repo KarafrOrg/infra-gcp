@@ -39,6 +39,28 @@ variable "gcp_service_service_accounts" {
 }
 # endregion
 
+# region Object storage
+variable "gcp_object_storage" {
+  description = "Object storage workloads, buckets, and S3-compatible credentials"
+  type = map(object({
+    service_account_id = string
+    display_name       = string
+    description        = string
+    secret_id          = string
+    location           = string
+    storage_class      = optional(string, "STANDARD")
+    buckets            = map(string)
+    workload_identity = optional(object({
+      pool_project_number = string
+      pool_id             = string
+      namespace           = string
+      service_account     = string
+    }))
+  }))
+  default = {}
+}
+# endregion
+
 # region k8s CA Certificate References (managed externally in Secret Manager)
 variable "k8s_ca_certificate_refs" {
   description = "Map of k8s clusters for Pub/Sub topic creation (CA certificates must be managed externally)"
@@ -170,4 +192,3 @@ variable "org_policy_config" {
   default = {}
 }
 # endregion
-

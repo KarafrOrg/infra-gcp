@@ -2,6 +2,59 @@ gcp_project_name = "karafra-net"
 
 enable_organization_policies = false
 
+gcp_object_storage = {
+  loki = {
+    service_account_id = "monitoring-loki-storage"
+    display_name       = "loki object storage"
+    description        = "Object storage access for loki monitoring workloads"
+    secret_id          = "monitoring-loki-s3"
+    location           = "europe-west1"
+    buckets = {
+      chunks = "karafra-net-loki-chunks"
+      ruler  = "karafra-net-loki-ruler"
+    }
+    workload_identity = {
+      pool_project_number = "1019265211616"
+      pool_id             = "k8s-karafra-net"
+      namespace           = "infra-monitoring"
+      service_account     = "loki"
+    }
+  }
+  mimir = {
+    service_account_id = "monitoring-mimir-storage"
+    display_name       = "mimir object storage"
+    description        = "Object storage access for mimir monitoring workloads"
+    secret_id          = "monitoring-mimir-s3"
+    location           = "europe-west1"
+    buckets = {
+      tsdb  = "karafra-net-mimir-tsdb"
+      ruler = "karafra-net-mimir-ruler"
+    }
+    workload_identity = {
+      pool_project_number = "1019265211616"
+      pool_id             = "k8s-karafra-net"
+      namespace           = "infra-monitoring"
+      service_account     = "mimir"
+    }
+  }
+  tempo = {
+    service_account_id = "monitoring-tempo-storage"
+    display_name       = "tempo object storage"
+    description        = "Object storage access for tempo monitoring workloads"
+    secret_id          = "monitoring-tempo-s3"
+    location           = "europe-west1"
+    buckets = {
+      traces = "karafra-net-tempo-traces"
+    }
+    workload_identity = {
+      pool_project_number = "1019265211616"
+      pool_id             = "k8s-karafra-net"
+      namespace           = "infra-monitoring"
+      service_account     = "tempo"
+    }
+  }
+}
+
 gcp_service_service_accounts = {
   "gha-infra-cluster" = {
     display_name = "GitHub Actions Cluster Service Account"
