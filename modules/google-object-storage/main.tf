@@ -53,6 +53,13 @@ resource "google_storage_bucket_iam_member" "object_admin" {
   member   = "serviceAccount:${google_service_account.object_storage[each.value.service].email}"
 }
 
+resource "google_storage_bucket_iam_member" "bucket_reader" {
+  for_each = local.buckets
+  bucket   = google_storage_bucket.object_storage[each.key].name
+  role     = "roles/storage.legacyBucketReader"
+  member   = "serviceAccount:${google_service_account.object_storage[each.value.service].email}"
+}
+
 resource "google_storage_hmac_key" "object_storage" {
   for_each              = var.object_storage
   project               = var.gcp_project_name
